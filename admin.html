@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
+<title>Admin Dashboard</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
+<div class="card">
+
 <button onclick="toggleDark()">🌙 Dark Mode</button>
 
 <h2>Admin Dashboard</h2>
 
-<button onclick="exportExcel()">⬇ Excel</button>
-<button onclick="exportPDF()">⬇ PDF</button>
+<button onclick="exportExcel()">⬇ Download Excel</button>
+<button onclick="exportPDF()">⬇ Download PDF</button>
 
 <center>
 <canvas id="chart" width="120" height="120"></canvas>
@@ -24,6 +26,8 @@
 <div id="adminList"></div>
 
 <button onclick="logout()">Logout</button>
+
+</div>
 
 <script src="app.js"></script>
 </body>
