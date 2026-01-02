@@ -1,3 +1,4 @@
+/* MAIN BACKGROUND */
 body{
  margin:0;
  min-height:100vh;
@@ -5,65 +6,103 @@ body{
  justify-content:center;
  align-items:center;
  font-family:Segoe UI;
- background:url("gla.jpg") no-repeat center center fixed;
+ background:url("bg.jpg") no-repeat center center fixed;
  background-size:cover;
 }
 
+/* COLLEGE BRAND LOGO */
+.brand{
+ position:fixed;
+ top:15px;
+ left:50%;
+ transform:translateX(-50%);
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ z-index:9999;
+}
 
+.brand img{
+ width:120px;
+ margin-bottom:6px;
+}
+
+.brand h1{
+ margin:0;
+ font-size:30px;
+ font-weight:900;
+ color:#fff;
+ text-shadow:0 4px 12px rgba(0,0,0,0.9);
+ letter-spacing:2px;
+}
+
+.brand p{
+ margin:0;
+ font-size:14px;
+ color:#fff;
+ text-shadow:0 2px 6px rgba(0,0,0,0.8);
+}
+
+/* GLASS LOGIN CARD */
 .card{
- background:rgba(255,255,255,0.92);
- backdrop-filter:blur(8px);
- width:360px;
- padding:25px;
- border-radius:15px;
+ background:rgba(255,255,255,0.95);
+ backdrop-filter:blur(10px);
+ width:380px;
+ padding:30px;
+ border-radius:18px;
  text-align:center;
- box-shadow:0 12px 30px rgba(0,0,0,.4);
- margin-top:140px;
+ box-shadow:0 15px 40px rgba(0,0,0,.4);
+ margin-top:160px;
 }
 
+.wide{max-width:800px}
 
-
-input,textarea{
- width:92%;
- padding:10px;
- margin:10px 0;
- border-radius:6px;
- border:1px solid #ccc;
-}
-
-button{
+/* INPUTS */
+input,textarea,select{
  width:95%;
- padding:10px;
+ padding:12px;
+ margin:10px 0;
+ border-radius:8px;
+ border:1px solid #ccc;
+ font-size:15px;
+}
+
+/* BUTTONS */
+button{
+ width:100%;
+ padding:12px;
  margin-top:8px;
  border:none;
- border-radius:6px;
- background:#007bff;
+ border-radius:8px;
+ background:#0d6efd;
  color:white;
  font-weight:bold;
  cursor:pointer;
 }
+button:hover{background:#084298}
 
-button:hover{background:#0056b3}
-
+/* COMPLAINT BOX */
 .box{
  background:white;
- padding:12px;
- margin:10px auto;
- width:320px;
- border-radius:10px;
- box-shadow:0 4px 12px rgba(0,0,0,.2);
+ padding:15px;
+ margin:12px auto;
+ width:95%;
+ border-radius:12px;
+ box-shadow:0 6px 16px rgba(0,0,0,.2);
+}
+.modern{border-left:6px solid #0d6efd}
+
+/* DARK MODE */
+.dark{
+ background:#121212!important;
+ color:white;
+}
+.dark .card,.dark .box{
+ background:#1e1e1e;
+ color:white;
 }
 
-.dark{background:#121212!important;color:white}
-.dark .card,.dark .box{background:#1e1e1e;color:white}
-
-@media(max-width:600px){
- .card{width:95%}
- .box{width:95%}
-}
-.modern{border-left:6px solid #007bff}
-.card.wide{max-width:750px}
-
+/* ADMIN STATS */
 .stats-bar{
  display:grid;
  grid-template-columns:repeat(4,1fr);
@@ -71,8 +110,8 @@ button:hover{background:#0056b3}
  margin:10px 0;
 }
 .stat-box{
- padding:10px;
- border-radius:10px;
+ padding:12px;
+ border-radius:12px;
  color:white;
  font-weight:bold;
  text-align:center;
@@ -82,6 +121,7 @@ button:hover{background:#0056b3}
 .resolved{background:#5cb85c}
 .cancel{background:#d9534f}
 
+/* SOLVED METER */
 .meter{
  background:#ddd;
  border-radius:20px;
@@ -99,34 +139,9 @@ button:hover{background:#0056b3}
  width:0%;
 }
 
-
-.brand{
- position:fixed;
- top:25px;
- left:0;
- width:100%;
- text-align:center;
- z-index:1000;
-}
-
-.brand img{
- width:110px;
- display:block;
- margin:0 auto 5px;
-}
-
-.brand h1{
- margin:0;
- font-size:28px;
- font-weight:800;
- color:#ffffff;
- text-shadow:0 3px 10px rgba(0,0,0,.9);
-}
-
-.brand p{
- margin:0;
- font-size:14px;
- color:#ffffff;
- letter-spacing:2px;
- text-shadow:0 2px 6px rgba(0,0,0,.8);
+/* MOBILE RESPONSIVE */
+@media(max-width:600px){
+ .card{width:95%;margin-top:180px}
+ .brand h1{font-size:22px}
+ .brand img{width:90px}
 }
