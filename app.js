@@ -1,4 +1,4 @@
-let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin"}];
+let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin",role:"Admin",uid:"ADMIN"}];
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
 let generatedOTP="";
 let myChart;
@@ -6,11 +6,15 @@ let currentFilter="All";
 
 /* REGISTER */
 function register(){
+ let role=document.getElementById("role").value;
+ let uid=document.getElementById("uid").value.trim();
  let u=ruser.value.trim(), p=rpass.value.trim();
- if(!u||!p){alert("Fill all fields");return;}
- users.push({username:u,password:p});
+
+ if(!u||!p||!uid){alert("Fill all fields");return;}
+
+ users.push({username:u,password:p,role:role,uid:uid});
  localStorage.setItem("users",JSON.stringify(users));
- alert("Registered Successfully");
+ alert(role+" Registered Successfully");
 }
 
 /* LOGIN */
@@ -89,11 +93,13 @@ function loadAdmin(){
              c.status=="In Progress"?"#3498db":
              c.status=="Resolved"?"#2ecc71":"#e74c3c";
 
+ let usr=users.find(x=>x.username==c.user);
+
  adminList.innerHTML+=`
   <div class="box" style="border-left:6px solid ${color}">
    <h3>${c.title}</h3>
    <p>${c.desc}</p>
-   User: ${c.user}<br>
+   User: ${c.user} (${usr?.role} - ${usr?.uid})<br>
 
    <select id="status${i}">
     <option ${c.status=="Pending"?"selected":""}>Pending</option>
@@ -166,7 +172,7 @@ function toggleDark(){
 }
 if(localStorage.getItem("dark")=="true") document.body.classList.add("dark");
 
-/* CHART WITH FILTER */
+/* CHART FILTER */
 function loadChart(){
  if(!document.getElementById("chart"))return;
 
@@ -178,10 +184,7 @@ function loadChart(){
 
  myChart=new Chart(chart,{
   type:"pie",
-  data:{
-   labels:statuses,
-   datasets:[{data:data,backgroundColor:colors}]
-  },
+  data:{labels:statuses,datasets:[{data:data,backgroundColor:colors}]},
   options:{
    onClick:function(evt,items){
     if(items.length){
