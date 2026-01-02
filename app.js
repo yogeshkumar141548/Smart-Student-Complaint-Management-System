@@ -2,6 +2,7 @@ let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",pass
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
 let generatedOTP="";
 let myChart;
+let currentFilter="All";
 
 /* REGISTER */
 function register(){
@@ -78,14 +79,26 @@ function loadAdmin(){
  if(!document.getElementById("adminList")) return;
  let q=search.value.toLowerCase();
  adminList.innerHTML="";
- complaints.filter(c=>c.user.toLowerCase().includes(q)).forEach((c,i)=>{
+
+ complaints
+ .filter(c => currentFilter=="All" ? true : c.status==currentFilter)
+ .filter(c => c.user.toLowerCase().includes(q))
+ .forEach((c,i)=>{
   adminList.innerHTML+=`
   <div class="box">
    <h3>${c.title}</h3>
    <p>${c.desc}</p>
    User: ${c.user}<br>
-   Status: ${c.status}<br>
-   <button onclick="deleteComplaint(${i})">Delete</button>
+
+   <select id="status${i}">
+    <option ${c.status=="Pending"?"selected":""}>Pending</option>
+    <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
+    <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
+    <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
+   </select>
+   <button onclick="saveStatus(${i})">Save</button>
+   <button onclick="deleteComplaint(${i})">Delete</button><br>
+
    ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}<br>
    <small>${c.time}</small>
   </div>`;
@@ -110,6 +123,13 @@ function deleteComplaint(i){
   localStorage.setItem("complaints",JSON.stringify(complaints));
   loadMy(); loadAdmin(); loadChart();
  }
+}
+
+/* SAVE STATUS */
+function saveStatus(i){
+ complaints[i].status=document.getElementById("status"+i).value;
+ localStorage.setItem("complaints",JSON.stringify(complaints));
+ loadAdmin(); loadChart();
 }
 
 /* EXPORT */
@@ -141,18 +161,24 @@ function toggleDark(){
 }
 if(localStorage.getItem("dark")=="true") document.body.classList.add("dark");
 
-/* CHART */
+/* CHART FILTER */
 function loadChart(){
- if(!document.getElementById("chart")) return;
- let p=complaints.filter(c=>c.status=="Pending").length;
- let ip=complaints.filter(c=>c.status=="In Progress").length;
- let r=complaints.filter(c=>c.status=="Resolved").length;
- let c=complaints.filter(c=>c.status=="Cancelled").length;
+ if(!document.getElementById("chart"))return;
+ let statuses=["Pending","In Progress","Resolved","Cancelled"];
+ let data=statuses.map(s=>complaints.filter(c=>c.status==s).length);
  if(myChart) myChart.destroy();
+
  myChart=new Chart(chart,{
   type:"pie",
-  data:{labels:["Pending","In Progress","Resolved","Cancelled"],
-        datasets:[{data:[p,ip,r,c]}]}
+  data:{labels:statuses,datasets:[{data:data}]},
+  options:{
+   onClick:function(evt,items){
+    if(items.length){
+     currentFilter=statuses[items[0].index];
+    }else currentFilter="All";
+    loadAdmin();
+   }
+  }
  });
 }
 
