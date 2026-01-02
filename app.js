@@ -91,7 +91,9 @@ function updateStatus(i,v){
 window.onload=function(){
  loadMy();
  loadAdmin();
+ loadChart();   // <-- ADD THIS
 };
+
 function exportExcel(){
  let csv="ID,User,Title,Description,Status,Time\n";
  complaints.forEach(c=>{
