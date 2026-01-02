@@ -92,3 +92,31 @@ window.onload=function(){
  loadMy();
  loadAdmin();
 };
+function exportExcel(){
+ let csv="ID,User,Title,Description,Status,Time\n";
+ complaints.forEach(c=>{
+  csv+=`${c.id},${c.user},${c.title},${c.desc},${c.status},${c.time}\n`;
+ });
+ let blob=new Blob([csv],{type:"text/csv"});
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="complaints.csv";
+ a.click();
+}
+
+/* ANALYTICS */
+function loadChart(){
+ if(!document.getElementById("chart"))return;
+
+ let p=complaints.filter(c=>c.status=="Pending").length;
+ let i=complaints.filter(c=>c.status=="In Progress").length;
+ let s=complaints.filter(c=>c.status=="Solved").length;
+
+ new Chart(chart,{
+  type:"pie",
+  data:{
+   labels:["Pending","In Progress","Solved"],
+   datasets:[{data:[p,i,s]}]
+  }
+ });
+}
