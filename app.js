@@ -66,19 +66,25 @@ function loadMy(){
 /* ADMIN VIEW */
 function loadAdmin(){
  if(!document.getElementById("adminList")) return;
- let q=document.getElementById("search")?.value.toLowerCase()||"";
+ let q = document.getElementById("search").value.toLowerCase();
  adminList.innerHTML="";
- complaints.filter(c=>c.user.toLowerCase().includes(q)).forEach((c,i)=>{
-  adminList.innerHTML+=`
-  <div class="box">
-   <b>${c.id}</b> - ${c.user}<br>
-   ${c.title}<br>${c.desc}<br>
-   <select onchange="updateStatus(${i},this.value)">
-    <option ${c.status==="Pending"?"selected":""}>Pending</option>
-    <option ${c.status==="In Progress"?"selected":""}>In Progress</option>
-    <option ${c.status==="Solved"?"selected":""}>Solved</option>
-   </select><br>${c.time}
-  </div>`;
+
+ complaints
+ .filter(c => c.user.toLowerCase().includes(q))
+ .forEach((c,i)=>{
+  adminList.innerHTML += `
+   <div class="box">
+    <b>${c.id}</b> - ${c.user}<br>
+    ${c.title}<br>${c.desc}<br>
+    Status:
+    <select onchange="updateStatus(${i},this.value)">
+     <option ${c.status=="Pending"?"selected":""}>Pending</option>
+     <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
+     <option ${c.status=="Solved"?"selected":""}>Solved</option>
+    </select><br>
+    ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}<br>
+    ${c.time}
+   </div>`;
  });
 }
 
