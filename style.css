@@ -30,6 +30,7 @@ button{
  background:#007bff;
  color:white;
  font-weight:bold;
+ cursor:pointer;
 }
 .box{
  background:white;
