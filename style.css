@@ -7,6 +7,7 @@ body{
  font-family:Segoe UI,Arial;
  background:linear-gradient(135deg,#1e3c72,#2a5298);
 }
+
 .card{
  background:white;
  width:360px;
@@ -15,22 +16,29 @@ body{
  text-align:center;
  box-shadow:0 12px 30px rgba(0,0,0,.3);
 }
-input,textarea,select{
+
+input,textarea{
  width:92%;
  padding:10px;
  margin:10px 0;
  border-radius:6px;
  border:1px solid #ccc;
 }
+
 button{
  width:95%;
  padding:10px;
+ margin-top:8px;
  border:none;
  border-radius:6px;
  background:#007bff;
  color:white;
  font-weight:bold;
+ cursor:pointer;
 }
+
+button:hover{background:#0056b3}
+
 .box{
  background:white;
  padding:12px;
@@ -38,4 +46,12 @@ button{
  width:320px;
  border-radius:10px;
  box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+
+.dark{background:#121212!important;color:white}
+.dark .card,.dark .box{background:#1e1e1e;color:white}
+
+@media(max-width:600px){
+ .card{width:95%}
+ .box{width:95%}
 }
