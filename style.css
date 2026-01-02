@@ -58,3 +58,37 @@ button:hover{background:#0056b3}
 .modern{border-left:6px solid #007bff}
 .card.wide{max-width:750px}
 
+.stats-bar{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:10px;
+ margin:10px 0;
+}
+.stat-box{
+ padding:10px;
+ border-radius:10px;
+ color:white;
+ font-weight:bold;
+ text-align:center;
+}
+.pending{background:#f0ad4e}
+.progress{background:#5bc0de}
+.resolved{background:#5cb85c}
+.cancel{background:#d9534f}
+
+.meter{
+ background:#ddd;
+ border-radius:20px;
+ height:25px;
+ overflow:hidden;
+ margin:10px 0;
+}
+#solveBar{
+ height:100%;
+ background:linear-gradient(90deg,#00c851,#007e33);
+ color:white;
+ font-weight:bold;
+ line-height:25px;
+ text-align:center;
+ width:0%;
+}
