@@ -7,7 +7,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-
 <div class="card">
 
 <button onclick="toggleDark()">🌙 Dark Mode</button>
@@ -16,20 +15,12 @@
 <button onclick="exportExcel()">⬇ Excel</button>
 <button onclick="exportPDF()">⬇ PDF</button>
 
-<center>
-<canvas id="chart" width="120" height="120"></canvas>
-</center>
-
-<p>Click on chart to filter complaints</p>
-
+<center><canvas id="chart" width="120" height="120"></canvas></center>
 <input id="search" placeholder="Search by Username" onkeyup="loadAdmin()">
-
 <div id="adminList"></div>
 
 <button onclick="logout()">Logout</button>
-
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
