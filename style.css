@@ -56,4 +56,5 @@ button:hover{background:#0056b3}
  .box{width:95%}
 }
 .modern{border-left:6px solid #007bff}
+.card.wide{max-width:750px}
 
