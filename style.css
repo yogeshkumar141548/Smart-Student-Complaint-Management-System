@@ -18,7 +18,9 @@ body{
  border-radius:15px;
  text-align:center;
  box-shadow:0 12px 30px rgba(0,0,0,.4);
+ margin-top:120px;
 }
+
 
 input,textarea{
  width:92%;
@@ -97,12 +99,23 @@ button:hover{background:#0056b3}
 }
 .brand{
  text-align:center;
- margin-bottom:20px;
+ margin-bottom:15px;
+ position:absolute;
+ top:40px;
+ width:100%;
+ left:0;
  color:white;
 }
 .brand img{
- width:90px;
- margin-bottom:10px;
+ width:110px;
+ margin-bottom:5px;
 }
-.brand h1{margin:5px 0}
-.brand p{margin:0;font-size:14px}
+.brand h1{
+ margin:5px 0;
+ font-size:26px;
+}
+.brand p{
+ margin:0;
+ font-size:14px;
+ letter-spacing:1px;
+}
