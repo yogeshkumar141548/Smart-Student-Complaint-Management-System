@@ -10,3 +10,7 @@ button{padding:10px 15px;background:#007bff;color:white;border:none;cursor:point
  input,textarea,button{width:90%}
  .box{width:95%}
 }
+#chart{
+ max-width:120px;
+ max-height:120px;
+}
