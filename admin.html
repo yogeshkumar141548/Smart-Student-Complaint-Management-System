@@ -3,11 +3,7 @@
 <head>
 <title>Admin Panel</title>
 <link rel="stylesheet" href="style.css">
-
-<!-- Chart JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- PDF Export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -16,20 +12,17 @@
 
 <h2>Admin Dashboard</h2>
 
-<button onclick="exportExcel()">⬇ Download Excel</button>
-<button onclick="exportPDF()">⬇ Download PDF</button>
+<button onclick="exportExcel()">⬇ Excel</button>
+<button onclick="exportPDF()">⬇ PDF</button>
 
 <center>
-<canvas id="chart" width="200" height="200"></canvas>
+<canvas id="chart" width="120" height="120"></canvas>
 </center>
-
-<br>
 
 <input id="search" placeholder="Search by Username" onkeyup="loadAdmin()">
 
 <div id="adminList"></div>
 
-<br>
 <button onclick="logout()">Logout</button>
 
 <script src="app.js"></script>
