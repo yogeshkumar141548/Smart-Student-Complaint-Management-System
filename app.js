@@ -3,11 +3,9 @@ let users = JSON.parse(localStorage.getItem("users")) || [
 ];
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
 
-/* REGISTER */
 function register(){
-  let u = document.getElementById("ruser").value;
-  let p = document.getElementById("rpass").value;
-
+  let u = ruser.value;
+  let p = rpass.value;
   if(u==""||p==""){alert("Fill all fields");return;}
 
   users.push({username:u,password:p});
@@ -15,10 +13,9 @@ function register(){
   alert("Registered Successfully");
 }
 
-/* LOGIN */
 function login(){
-  let u = document.getElementById("user").value;
-  let p = document.getElementById("pass").value;
+  let u = user.value;
+  let p = pass.value;
 
   let found = users.find(x=>x.username==u && x.password==p);
 
@@ -29,39 +26,31 @@ function login(){
     }else{
       window.location="dashboard.html";
     }
-  }else{
-    alert("Invalid Login");
-  }
+  }else alert("Invalid Login");
 }
 
-/* ADD COMPLAINT */
 function addComplaint(){
-  let t = document.getElementById("title").value;
-  let d = document.getElementById("desc").value;
-
   complaints.push({
     user: localStorage.getItem("loginUser"),
-    title: t,
-    desc: d,
-    status: "Pending"
+    title: title.value,
+    desc: desc.value,
+    status:"Pending"
   });
-
   localStorage.setItem("complaints",JSON.stringify(complaints));
   alert("Complaint Submitted");
   location.reload();
 }
 
-/* ADMIN VIEW */
 if(document.getElementById("adminList")){
   complaints.forEach((c,i)=>{
     adminList.innerHTML += `
     <div class="box">
-      <b>${c.title}</b> - ${c.user}<br>
-      ${c.desc}<br>
-      Status: ${c.status}
-      <button onclick="deleteComplaint(${i})">Delete</button>
-    </div>
-    `;
+    <b>${c.title}</b><br>
+    ${c.desc}<br>
+    User: ${c.user}<br>
+    Status: ${c.status}
+    <button onclick="deleteComplaint(${i})">Delete</button>
+    </div>`;
   });
 }
 
