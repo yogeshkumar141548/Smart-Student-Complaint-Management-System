@@ -1,27 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Student Dashboard</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="card">
+<div class="card wide">
 
 <button onclick="toggleDark()">🌙 Dark Mode</button>
+<h2>Student Complaint Portal</h2>
 
-<h2>Student Dashboard</h2>
+<select id="dept">
+<option value="">Select Department</option>
+<option>Computer</option>
+<option>Mechanical</option>
+<option>Electrical</option>
+<option>Civil</option>
+<option>Electronics</option>
+</select>
 
-<h3>New Complaint</h3>
-<input id="title" placeholder="Title">
-<textarea id="desc" placeholder="Description"></textarea>
+<select id="priority">
+<option>Low</option>
+<option>Medium</option>
+<option>High</option>
+</select>
+
+<input id="title" placeholder="Complaint Title">
+<textarea id="desc" placeholder="Complaint Description"></textarea>
 <input type="file" id="file">
-<button onclick="addComplaint()">Submit</button>
+
+<button onclick="addComplaint()">Submit Complaint</button>
 
 <h3>Your Complaints</h3>
 <div id="myComplaints"></div>
 
 <button onclick="logout()">Logout</button>
-
 </div>
 
 <script src="app.js"></script>
