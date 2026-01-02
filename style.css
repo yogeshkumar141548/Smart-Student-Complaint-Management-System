@@ -4,17 +4,20 @@ body{
  display:flex;
  justify-content:center;
  align-items:center;
- font-family:Segoe UI,Arial;
- background:linear-gradient(135deg,#1e3c72,#2a5298);
+ font-family:Segoe UI;
+ background:url("gla.jpg") no-repeat center center fixed;
+ background-size:cover;
 }
 
+
 .card{
- background:white;
+ background:rgba(255,255,255,0.9);
+ backdrop-filter:blur(6px);
  width:360px;
  padding:25px;
  border-radius:15px;
  text-align:center;
- box-shadow:0 12px 30px rgba(0,0,0,.3);
+ box-shadow:0 12px 30px rgba(0,0,0,.4);
 }
 
 input,textarea{
