@@ -5,16 +5,21 @@ body{
  justify-content:center;
  align-items:center;
  font-family:Segoe UI,Arial;
- background:linear-gradient(135deg,#1e3c72,#2a5298);
+ background:
+  linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+  url("gla.jpg") no-repeat center center fixed;
+ background-size:cover;
 }
+
 .card{
- background:white;
+ background:rgba(255,255,255,0.95);
  width:360px;
  padding:25px;
  border-radius:15px;
  text-align:center;
- box-shadow:0 12px 30px rgba(0,0,0,.3);
+ box-shadow:0 12px 30px rgba(0,0,0,.5);
 }
+
 input,textarea,select{
  width:92%;
  padding:10px;
@@ -22,6 +27,7 @@ input,textarea,select{
  border-radius:6px;
  border:1px solid #ccc;
 }
+
 button{
  width:95%;
  padding:10px;
@@ -32,13 +38,24 @@ button{
  font-weight:bold;
  cursor:pointer;
 }
+
+button:hover{background:#0056b3}
+
 .box{
- background:white;
+ background:rgba(255,255,255,0.95);
  padding:12px;
  margin:10px auto;
  width:320px;
  border-radius:10px;
- box-shadow:0 4px 12px rgba(0,0,0,.2);
+ box-shadow:0 4px 12px rgba(0,0,0,.4);
 }
-.dark{background:#121212!important;color:white}
-.dark .card,.dark .box{background:#1e1e1e;color:white}
+
+.dark{
+ background:#000!important;
+}
+
+.dark .card,
+.dark .box{
+ background:#1e1e1e;
+ color:white;
+}
