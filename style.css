@@ -1,26 +1,12 @@
-body{
-  font-family:Arial;
-  background:#f4f4f4;
-  text-align:center;
-}
+body{font-family:Arial;text-align:center;background:#f4f4f4}
+input,textarea{width:300px;padding:10px;margin:10px}
+button{padding:10px 15px;background:#007bff;color:white;border:none;cursor:pointer}
+.box{background:white;margin:10px auto;padding:10px;width:300px}
 
-input,textarea{
-  width:300px;
-  padding:10px;
-  margin:10px;
-}
+.dark{background:#121212;color:white}
+.dark .box{background:#1e1e1e}
 
-button{
-  background:#007bff;
-  color:white;
-  border:none;
-  padding:10px 20px;
-  cursor:pointer;
-}
-
-.box{
-  background:white;
-  padding:10px;
-  margin:10px auto;
-  width:300px;
+@media(max-width:600px){
+ input,textarea,button{width:90%}
+ .box{width:95%}
 }
