@@ -13,8 +13,10 @@ function register(){
 /* Login */
 function login(){
  let found=users.find(u=>u.username==user.value&&u.password==pass.value);
- if(found){generatedOTP=Math.floor(100000+Math.random()*900000);alert("Your OTP: "+generatedOTP);}
- else alert("Invalid Login");
+ if(found){
+   generatedOTP=Math.floor(100000+Math.random()*900000);
+   alert("Your OTP: "+generatedOTP);
+ } else alert("Invalid Login");
 }
 
 function verifyOTP(){
@@ -26,7 +28,7 @@ function verifyOTP(){
 
 function logout(){localStorage.clear();location="index.html";}
 
-/* Student Add */
+/* Add Complaint */
 function addComplaint(){
  if(!dept.value||!title.value||!desc.value) return alert("Fill all fields");
  let f=file.files[0], reader=new FileReader();
@@ -48,7 +50,7 @@ function addComplaint(){
  f?reader.readAsDataURL(f):reader.onload();
 }
 
-/* Student View */
+/* Student Complaints */
 function loadMy(){
  if(!myComplaints) return;
  let u=localStorage.getItem("loginUser");
@@ -64,7 +66,7 @@ function loadMy(){
  });
 }
 
-/* Admin View */
+/* Admin Panel */
 function loadAdmin(){
  if(!adminList) return;
  adminList.innerHTML="";
@@ -87,6 +89,7 @@ function loadAdmin(){
    <button onclick="deleteComplaint(${i})" style="background:#dc3545">Delete</button>
   </div>`;
  });
+ updateCounts();
  loadChart();
 }
 
@@ -96,7 +99,6 @@ function saveStatus(i){
  loadAdmin();
 }
 
-/* Delete */
 function deleteComplaint(i){
  if(confirm("Delete this complaint?")){
   complaints.splice(i,1);
@@ -113,7 +115,29 @@ function loadChart(){
  let r=complaints.filter(c=>c.status=="Resolved").length;
  let c=complaints.filter(c=>c.status=="Cancelled").length;
  if(myChart) myChart.destroy();
- myChart=new Chart(chart,{type:"pie",data:{labels:["Pending","In Progress","Resolved","Cancelled"],datasets:[{data:[p,ip,r,c]}]}});
+ myChart=new Chart(chart,{
+   type:"pie",
+   data:{labels:["Pending","In Progress","Resolved","Cancelled"],
+   datasets:[{data:[p,ip,r,c]}]}
+ });
+}
+
+/* Status Counter + Percentage */
+function updateCounts(){
+ let total=complaints.length;
+ let pending=complaints.filter(c=>c.status=="Pending").length;
+ let ip=complaints.filter(c=>c.status=="In Progress").length;
+ let resolved=complaints.filter(c=>c.status=="Resolved").length;
+ let cancel=complaints.filter(c=>c.status=="Cancelled").length;
+
+ pCount.innerText=pending;
+ ipCount.innerText=ip;
+ rCount.innerText=resolved;
+ cCount.innerText=cancel;
+
+ let percent= total ? Math.round((resolved/total)*100) : 0;
+ solveBar.innerText=percent+"% Solved";
+ solveBar.style.width=percent+"%";
 }
 
 /* Export */
@@ -122,20 +146,21 @@ function exportExcel(){
  complaints.forEach(c=>csv+=`${c.id},${c.user},${c.dept},${c.priority},${c.title},${c.status},${c.time}\n`);
  let a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([csv]));
- a.download="complaints.csv"; a.click();
+ a.download="complaints.csv";a.click();
 }
 
 function exportPDF(){
  const {jsPDF}=window.jspdf;
- let doc=new jsPDF(), y=15;
+ let doc=new jsPDF(),y=15;
  doc.text("GLA University Complaint Report",10,10);
  complaints.forEach(c=>{
-  doc.text(`ID:${c.id} User:${c.user} Dept:${c.dept} Priority:${c.priority}`,10,y); y+=7;
-  doc.text(`Title:${c.title} Status:${c.status}`,10,y); y+=10;
+  doc.text(`ID:${c.id} User:${c.user} Dept:${c.dept} Priority:${c.priority}`,10,y);y+=7;
+  doc.text(`Title:${c.title} Status:${c.status}`,10,y);y+=10;
  });
  doc.save("Complaint_Report.pdf");
 }
 
 /* Dark Mode */
 function toggleDark(){document.body.classList.toggle("dark");}
+
 window.onload=()=>{loadMy();loadAdmin();loadChart();}
