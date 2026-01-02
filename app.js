@@ -84,8 +84,13 @@ function loadAdmin(){
  .filter(c => currentFilter=="All" ? true : c.status==currentFilter)
  .filter(c => c.user.toLowerCase().includes(q))
  .forEach((c,i)=>{
-  adminList.innerHTML+=`
-  <div class="box">
+
+ let color = c.status=="Pending"?"#f39c12":
+             c.status=="In Progress"?"#3498db":
+             c.status=="Resolved"?"#2ecc71":"#e74c3c";
+
+ adminList.innerHTML+=`
+  <div class="box" style="border-left:6px solid ${color}">
    <h3>${c.title}</h3>
    <p>${c.desc}</p>
    User: ${c.user}<br>
@@ -161,16 +166,22 @@ function toggleDark(){
 }
 if(localStorage.getItem("dark")=="true") document.body.classList.add("dark");
 
-/* CHART FILTER */
+/* CHART WITH FILTER */
 function loadChart(){
  if(!document.getElementById("chart"))return;
+
  let statuses=["Pending","In Progress","Resolved","Cancelled"];
+ let colors=["#f39c12","#3498db","#2ecc71","#e74c3c"];
  let data=statuses.map(s=>complaints.filter(c=>c.status==s).length);
+
  if(myChart) myChart.destroy();
 
  myChart=new Chart(chart,{
   type:"pie",
-  data:{labels:statuses,datasets:[{data:data}]},
+  data:{
+   labels:statuses,
+   datasets:[{data:data,backgroundColor:colors}]
+  },
   options:{
    onClick:function(evt,items){
     if(items.length){
