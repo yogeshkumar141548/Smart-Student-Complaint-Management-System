@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Smart Student Complaint System</title>
+<title>Smart Complaint Portal</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -10,7 +10,7 @@
 
 <button onclick="toggleDark()">🌙 Dark Mode</button>
 
-<h2>GLA UNIVERSITY COMPLIANT PORTAL</h2>
+<h2>Login</h2>
 <input id="user" placeholder="Username">
 <input id="pass" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
@@ -20,7 +20,14 @@
 
 <hr>
 
-<h3>New Student Registration</h3>
+<h3>New Registration</h3>
+
+<select id="role">
+ <option value="Student">Student</option>
+ <option value="Teacher">Teacher</option>
+</select>
+
+<input id="uid" placeholder="Student ID / Teacher ID">
 <input id="ruser" placeholder="Username">
 <input id="rpass" type="password" placeholder="Password">
 <button onclick="register()">Register</button>
