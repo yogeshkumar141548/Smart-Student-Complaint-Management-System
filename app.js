@@ -68,9 +68,9 @@ function loadMy(){
   <div class="box">
    <h3>${c.title}</h3>
    <p>${c.desc}</p>
-   Status: ${c.status}<br>
-   <button onclick="editComplaint(${i})">Edit</button>
-   <button onclick="deleteComplaint(${i})">Delete</button>
+   <b>Status:</b> ${c.status}<br>
+   <button onclick="editComplaint(${i})">✏ Edit</button>
+   <button onclick="deleteComplaint(${i})">🗑 Delete</button>
    <small>${c.time}</small>
   </div>`;
  });
@@ -86,7 +86,7 @@ function loadAdmin(){
  .filter(c => currentFilter=="All" ? true : c.status==currentFilter)
  .filter(c => c.user.toLowerCase().includes(q))
  .forEach((c,i)=>{
-  
+
  let color = c.status=="Pending"?"#f39c12":
              c.status=="In Progress"?"#3498db":
              c.status=="Resolved"?"#2ecc71":"#e74c3c";
@@ -138,7 +138,7 @@ function saveStatus(i){
  loadAdmin(); loadChart();
 }
 
-/* ================= CHART WITH COLOR FILTER ================= */
+/* ================= CHART FILTER WITH COLORS ================= */
 function loadChart(){
  if(!document.getElementById("chart")) return;
 
