@@ -1,17 +1,20 @@
 let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin"}];
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
 let generatedOTP="";
+let myChart;
 
+/* REGISTER */
 function register(){
- let u=ruser.value.trim(),p=rpass.value.trim();
+ let u=ruser.value.trim(), p=rpass.value.trim();
  if(!u||!p){alert("Fill all fields");return;}
  users.push({username:u,password:p});
  localStorage.setItem("users",JSON.stringify(users));
  alert("Registered Successfully");
 }
 
+/* LOGIN */
 function login(){
- let u=user.value.trim(),p=pass.value.trim();
+ let u=user.value.trim(), p=pass.value.trim();
  let found=users.find(x=>x.username===u && x.password===p);
  if(found){
   generatedOTP=Math.floor(100000+Math.random()*900000).toString();
@@ -31,8 +34,9 @@ function logout(){
  window.location="index.html";
 }
 
+/* ADD COMPLAINT */
 function addComplaint(){
- let t=title.value.trim(),d=desc.value.trim();
+ let t=title.value.trim(), d=desc.value.trim();
  if(!t||!d){alert("Fill all fields");return;}
  let f=file.files[0];
  let reader=new FileReader();
@@ -40,90 +44,116 @@ function addComplaint(){
   complaints.push({
    id:"CMP"+(complaints.length+1),
    user:localStorage.getItem("loginUser"),
-   title:t,desc:d,file:reader.result,
-   status:"Pending",time:new Date().toLocaleString()
+   title:t, desc:d, file:reader.result,
+   status:"Pending", time:new Date().toLocaleString()
   });
   localStorage.setItem("complaints",JSON.stringify(complaints));
-  title.value="";desc.value="";file.value="";
+  title.value=""; desc.value=""; file.value="";
   loadMy();
  }
  if(f) reader.readAsDataURL(f); else reader.onload();
 }
 
+/* STUDENT VIEW */
 function loadMy(){
- if(!document.getElementById("myComplaints"))return;
+ if(!document.getElementById("myComplaints")) return;
  let u=localStorage.getItem("loginUser");
  myComplaints.innerHTML="";
- complaints.filter(c=>c.user===u).forEach(c=>{
+ complaints.filter(c=>c.user===u).forEach((c,i)=>{
   myComplaints.innerHTML+=`
   <div class="box">
-   <h3>${c.title}</h3><p>${c.desc}</p>
+   <h3>${c.title}</h3>
+   <p>${c.desc}</p>
    Status: ${c.status}<br>
-   ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}
+   ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}<br>
+   <button onclick="editComplaint(${i})">Edit</button>
+   <button onclick="deleteComplaint(${i})">Delete</button>
    <small>${c.time}</small>
   </div>`;
  });
 }
 
+/* ADMIN VIEW */
 function loadAdmin(){
- if(!document.getElementById("adminList"))return;
+ if(!document.getElementById("adminList")) return;
  let q=search.value.toLowerCase();
  adminList.innerHTML="";
  complaints.filter(c=>c.user.toLowerCase().includes(q)).forEach((c,i)=>{
   adminList.innerHTML+=`
   <div class="box">
-   <h3>${c.title}</h3><p>${c.desc}</p>
+   <h3>${c.title}</h3>
+   <p>${c.desc}</p>
    User: ${c.user}<br>
-   <select id="status${i}">
-    <option ${c.status=="Pending"?"selected":""}>Pending</option>
-    <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
-    <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
-    <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
-   </select>
-   <button onclick="saveStatus(${i})">Save</button><br>
-   ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}
+   Status: ${c.status}<br>
+   <button onclick="deleteComplaint(${i})">Delete</button>
+   ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}<br>
    <small>${c.time}</small>
   </div>`;
  });
 }
 
-function saveStatus(i){
- complaints[i].status=document.getElementById("status"+i).value;
- localStorage.setItem("complaints",JSON.stringify(complaints));
- loadAdmin(); loadChart();
+/* EDIT & DELETE */
+function editComplaint(i){
+ let nt=prompt("Edit Title",complaints[i].title);
+ let nd=prompt("Edit Description",complaints[i].desc);
+ if(nt && nd){
+  complaints[i].title=nt;
+  complaints[i].desc=nd;
+  localStorage.setItem("complaints",JSON.stringify(complaints));
+  loadMy(); loadAdmin(); loadChart();
+ }
 }
 
+function deleteComplaint(i){
+ if(confirm("Delete this complaint?")){
+  complaints.splice(i,1);
+  localStorage.setItem("complaints",JSON.stringify(complaints));
+  loadMy(); loadAdmin(); loadChart();
+ }
+}
+
+/* EXPORT */
 function exportExcel(){
  let csv="ID,User,Title,Description,Status,Time\n";
  complaints.forEach(c=>csv+=`${c.id},${c.user},${c.title},${c.desc},${c.status},${c.time}\n`);
  let blob=new Blob([csv],{type:"text/csv"});
- let a=document.createElement("a");a.href=URL.createObjectURL(blob);
- a.download="complaints.csv";a.click();
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="complaints.csv";
+ a.click();
 }
 
 function exportPDF(){
  const {jsPDF}=window.jspdf;
- let doc=new jsPDF(); let y=10;
+ let doc=new jsPDF(), y=10;
  doc.text("Complaint Report",10,y); y+=10;
- complaints.forEach(c=>{doc.text(`${c.id} | ${c.user} | ${c.title} | ${c.status}`,10,y); y+=8;});
+ complaints.forEach(c=>{
+  doc.text(`${c.id} | ${c.user} | ${c.title} | ${c.status}`,10,y);
+  y+=8;
+ });
  doc.save("complaints.pdf");
 }
 
+/* DARK MODE */
 function toggleDark(){
  document.body.classList.toggle("dark");
  localStorage.setItem("dark",document.body.classList.contains("dark"));
 }
 if(localStorage.getItem("dark")=="true") document.body.classList.add("dark");
 
-let myChart;
+/* CHART */
 function loadChart(){
- if(!document.getElementById("chart"))return;
+ if(!document.getElementById("chart")) return;
  let p=complaints.filter(c=>c.status=="Pending").length;
  let ip=complaints.filter(c=>c.status=="In Progress").length;
  let r=complaints.filter(c=>c.status=="Resolved").length;
  let c=complaints.filter(c=>c.status=="Cancelled").length;
  if(myChart) myChart.destroy();
- myChart=new Chart(chart,{type:"pie",data:{labels:["Pending","In Progress","Resolved","Cancelled"],datasets:[{data:[p,ip,r,c]}]}});
+ myChart=new Chart(chart,{
+  type:"pie",
+  data:{labels:["Pending","In Progress","Resolved","Cancelled"],
+        datasets:[{data:[p,ip,r,c]}]}
+ });
 }
 
 window.onload=function(){loadMy();loadAdmin();loadChart();}
