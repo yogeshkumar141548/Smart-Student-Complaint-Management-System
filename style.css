@@ -95,3 +95,14 @@ button:hover{background:#0056b3}
  text-align:center;
  width:0%;
 }
+.brand{
+ text-align:center;
+ margin-bottom:20px;
+ color:white;
+}
+.brand img{
+ width:90px;
+ margin-bottom:10px;
+}
+.brand h1{margin:5px 0}
+.brand p{margin:0;font-size:14px}
