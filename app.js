@@ -56,12 +56,15 @@ function loadMy(){
  complaints.filter(c=>c.user===u).forEach(c=>{
   myComplaints.innerHTML+=`
   <div class="box">
-   <b>${c.id}</b><br>
-   ${c.title}<br>${c.desc}<br>
-   Status: ${c.status}<br>${c.time}
+   <h3>${c.title}</h3>
+   <p>${c.desc}</p>
+   <b>Status:</b> ${c.status}<br>
+   ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}<br>
+   <small>${c.time}</small>
   </div>`;
  });
 }
+
 
 /* ADMIN VIEW */
 function loadAdmin(){
@@ -69,24 +72,25 @@ function loadAdmin(){
  let q = document.getElementById("search").value.toLowerCase();
  adminList.innerHTML="";
 
- complaints
- .filter(c => c.user.toLowerCase().includes(q))
- .forEach((c,i)=>{
-  adminList.innerHTML += `
+ complaints.filter(c=>c.user.toLowerCase().includes(q)).forEach((c,i)=>{
+  adminList.innerHTML+=`
    <div class="box">
-    <b>${c.id}</b> - ${c.user}<br>
-    ${c.title}<br>${c.desc}<br>
-    Status:
+    <h3>${c.title}</h3>
+    <p>${c.desc}</p>
+    <b>User:</b> ${c.user}<br>
+    <b>Status:</b>
     <select onchange="updateStatus(${i},this.value)">
      <option ${c.status=="Pending"?"selected":""}>Pending</option>
      <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
-     <option ${c.status=="Solved"?"selected":""}>Solved</option>
+     <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
+     <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
     </select><br>
     ${c.file?`<a href="${c.file}" target="_blank">View File</a>`:""}<br>
-    ${c.time}
+    <small>${c.time}</small>
    </div>`;
  });
 }
+
 
 function updateStatus(i,v){
  complaints[i].status=v;
@@ -116,15 +120,16 @@ function exportExcel(){
 function loadChart(){
  if(!document.getElementById("chart"))return;
 
- let p=complaints.filter(c=>c.status=="Pending").length;
- let i=complaints.filter(c=>c.status=="In Progress").length;
- let s=complaints.filter(c=>c.status=="Solved").length;
+ let pending = complaints.filter(c=>c.status=="Pending").length;
+ let progress = complaints.filter(c=>c.status=="In Progress").length;
+ let resolved = complaints.filter(c=>c.status=="Resolved").length;
+ let cancelled = complaints.filter(c=>c.status=="Cancelled").length;
 
  new Chart(chart,{
   type:"pie",
   data:{
-   labels:["Pending","In Progress","Solved"],
-   datasets:[{data:[p,i,s]}]
+   labels:["Pending","In Progress","Resolved","Cancelled"],
+   datasets:[{data:[pending,progress,resolved,cancelled]}]
   }
  });
 }
