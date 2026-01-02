@@ -63,3 +63,7 @@ button:hover{background:#0056b3}
  .card{width:95%}
  .box{width:95%}
 }
+.card h2{
+ color:#1e3c72;
+ margin-bottom:10px;
+}
