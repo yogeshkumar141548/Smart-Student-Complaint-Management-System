@@ -193,3 +193,10 @@ document.getElementById("loginBtn")?.addEventListener("click",function(){
  otpCode=Math.floor(100000+Math.random()*900000);
  alert("Your OTP: "+otpCode);
 });
+document.getElementById("verifyBtn")?.addEventListener("click",function(){
+ let o=document.getElementById("otp").value;
+ if(o==otpCode){
+  localStorage.setItem("loginUser",document.getElementById("user").value);
+  location=(document.getElementById("user").value=="admin")?"admin.html":"dashboard.html";
+ }else alert("Wrong OTP");
+});
