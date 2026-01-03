@@ -7,32 +7,19 @@
 </head>
 <body>
 
-<div class="notify">🔔 <span id="notifyCount">0</span></div>
-
 <div class="card wide">
 
 <button onclick="toggleDark()">🌙 Dark Mode</button>
 <h2>Admin Dashboard</h2>
 
-<select id="deptFilter">
-<option value="">All Departments</option>
-<option>Computer</option>
-<option>Mechanical</option>
-<option>Electrical</option>
-<option>Civil</option>
-<option>Electronics</option>
-</select>
-
 <input id="search" placeholder="Search Username" onkeyup="loadAdmin()">
 
 <canvas id="chart" height="150"></canvas>
-<canvas id="barChart" height="120"></canvas>
 
 <div id="adminList"></div>
 
 <button onclick="logout()">Logout</button>
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
