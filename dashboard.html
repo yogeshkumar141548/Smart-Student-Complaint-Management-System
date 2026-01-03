@@ -7,11 +7,15 @@
 <body>
 
 <div class="notify">🔔 <span id="notifyCount">0</span></div>
-<button onclick="toggleDark()" style="margin-bottom:10px">🌙 Dark Mode</button>
 
 <div class="card wide">
 
-<h2>Student Complaint Portal</h2>
+<div style="display:flex;justify-content:space-between;align-items:center">
+ <h2>Student Complaint Portal</h2>
+ <button onclick="toggleDark()" class="darkBtn">🌙 Dark Mode</button>
+</div>
+
+<div id="solvedMeter" style="margin:10px;font-weight:bold">0% Solved</div>
 
 <select id="dept">
 <option value="">Select Department</option>
@@ -30,6 +34,8 @@
 
 <input id="title" placeholder="Complaint Title">
 <textarea id="desc" placeholder="Complaint Description"></textarea>
+
+<input type="file" id="fileUpload">
 
 <button onclick="addComplaint()">Submit Complaint</button>
 
