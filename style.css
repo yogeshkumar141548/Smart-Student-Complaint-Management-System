@@ -1,200 +1,67 @@
-/* MAIN BACKGROUND */
 body{
- margin:0;
- min-height:100vh;
- display:flex;
- justify-content:center;
- align-items:center;
+ margin:0;min-height:100vh;
+ display:flex;justify-content:center;align-items:center;
  font-family:Segoe UI;
- background:url("gla.jpg") no-repeat center center fixed;
- background-size:cover;
+ background:url("bg.jpg") no-repeat center/cover fixed;
 }
 
-/* COLLEGE BRAND LOGO */
+/* Logo */
 .brand{
- position:fixed;
- top:20px;
- right:20px;
- display:flex;
- flex-direction:column;
- align-items:right;
- z-index:9999;
+ position:fixed;top:20px;right:20px;
+ text-align:center;z-index:9999;color:white;
 }
+.brand img{width:110px}
 
-.brand img{
- width:110px;
- margin-bottom:5px;
-}
-
-.brand h1{
- margin:0;
- font-size:24px;
- font-weight:900;
- color:#fff;
- text-shadow:0 3px 10px rgba(0,0,0,0.9);
- letter-spacing:1px;
-}
-
-.brand p{
- margin:0;
- font-size:13px;
- color:#fff;
- text-shadow:0 2px 6px rgba(0,0,0,0.8);
-}
-
-
-/* GLASS LOGIN CARD */
+/* Card */
 .card{
- background:rgba(255,255,255,0.95);
+ background:rgba(255,255,255,.95);
  backdrop-filter:blur(10px);
- width:380px;
- padding:30px;
- border-radius:18px;
- text-align:center;
+ width:380px;padding:30px;border-radius:18px;
  box-shadow:0 15px 40px rgba(0,0,0,.4);
- margin-top:160px;
+ margin-top:160px;text-align:center;
 }
+.wide{max-width:850px}
 
-.wide{max-width:800px}
-
-/* INPUTS */
+/* Inputs */
 input,textarea,select{
- width:95%;
- padding:12px;
- margin:10px 0;
- border-radius:8px;
- border:1px solid #ccc;
- font-size:15px;
+ width:100%;padding:12px;margin:10px 0;
+ border-radius:8px;border:1px solid #ccc;
 }
 
-/* BUTTONS */
+/* Buttons */
 button{
- width:100%;
- padding:12px;
- margin-top:8px;
- border:none;
- border-radius:8px;
- background:#0d6efd;
- color:white;
- font-weight:bold;
- cursor:pointer;
+ width:100%;padding:12px;margin-top:8px;
+ background:#0d6efd;border:none;border-radius:8px;
+ color:white;font-weight:bold;cursor:pointer;
 }
 button:hover{background:#084298}
 
-/* COMPLAINT BOX */
-.box{
- background:white;
- padding:15px;
- margin:12px auto;
- width:95%;
- border-radius:12px;
- box-shadow:0 6px 16px rgba(0,0,0,.2);
-}
-.modern{border-left:6px solid #0d6efd}
-
-/* DARK MODE */
-.dark{
- background:#121212!important;
- color:white;
-}
-.dark .card,.dark .box{
- background:#1e1e1e;
- color:white;
-}
-
-/* ADMIN STATS */
-.stats-bar{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:10px;
- margin:10px 0;
-}
-.stat-box{
- padding:12px;
- border-radius:12px;
- color:white;
- font-weight:bold;
- text-align:center;
-}
-.pending{background:#f0ad4e}
-.progress{background:#5bc0de}
-.resolved{background:#5cb85c}
-.cancel{background:#d9534f}
-
-/* SOLVED METER */
-.meter{
- background:#ddd;
- border-radius:20px;
- height:25px;
- overflow:hidden;
- margin:10px 0;
-}
-#solveBar{
- height:100%;
- background:linear-gradient(90deg,#00c851,#007e33);
- color:white;
- font-weight:bold;
- line-height:25px;
- text-align:center;
- width:0%;
-}
-
-/* MOBILE RESPONSIVE */
-@media(max-width:600px){
- .card{width:95%;margin-top:180px}
- .brand h1{font-size:22px}
- .brand img{width:90px}
-}
+/* Loader */
 #loader{
- position:fixed;
- top:0; left:0;
- width:100%; height:100%;
- background:rgba(0,0,0,0.6);
- display:flex;
- justify-content:center;
- align-items:center;
- z-index:10000;
+ position:fixed;top:0;left:0;width:100%;height:100%;
+ background:rgba(0,0,0,.6);
+ display:flex;justify-content:center;align-items:center;
+ z-index:10000;pointer-events:none;
 }
-
 .spinner{
- width:70px;
- height:70px;
- border:8px solid #fff;
- border-top:8px solid #0d6efd;
- border-radius:50%;
+ width:70px;height:70px;border:8px solid white;
+ border-top:8px solid #0d6efd;border-radius:50%;
  animation:spin 1s linear infinite;
 }
-
 @keyframes spin{100%{transform:rotate(360deg)}}
-button{
- position:relative;
- overflow:hidden;
- transition:0.3s ease;
-}
 
-button::after{
- content:"";
- position:absolute;
- top:0; left:-100%;
- width:100%; height:100%;
- background:rgba(255,255,255,0.3);
- transition:.4s;
-}
-
-button:hover::after{
- left:100%;
-}
+/* Notification */
 .notify{
- position:absolute;
- top:15px;
- right:20px;
- font-size:22px;
- cursor:pointer;
+ position:fixed;top:20px;left:20px;
+ font-size:22px;cursor:pointer;
 }
 .notify span{
- background:red;
- color:white;
- border-radius:50%;
- padding:2px 7px;
- font-size:12px;
+ background:red;color:white;border-radius:50%;
+ padding:2px 7px;font-size:12px;
+}
+
+/* Complaint Box */
+.box{
+ background:white;padding:15px;margin:10px;border-radius:12px;
+ box-shadow:0 4px 10px rgba(0,0,0,.2);
 }
