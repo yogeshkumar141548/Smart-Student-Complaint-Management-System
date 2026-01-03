@@ -81,13 +81,13 @@ button:hover{background:#084298;transform:scale(1.03)}
  padding:2px 7px;
  font-size:12px;
 }
-/* Dark Mode only for cards & boxes */
+
+/* DARK MODE (Only Card + Boxes) */
 body.dark .card,
 body.dark .box{
- background:#1e1e1e !important;
- color:white !important;
+ background:#1e1e1e!important;
+ color:white!important;
 }
-.card button{
-  position:static;
-  width:100%;
-}
+
+/* Remove any ghost loader */
+#loader{display:none!important;}
