@@ -2,7 +2,43 @@ let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",pass
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
 let otpCode="", myChart;
 
-/* =============== AI CATEGORY ================= */
+/* ================= AUTH ================= */
+function register(){
+ let ru=document.getElementById("ruser").value.trim();
+ let rp=document.getElementById("rpass").value.trim();
+ if(!ru||!rp) return alert("Fill all");
+
+ users.push({username:ru,password:rp});
+ localStorage.setItem("users",JSON.stringify(users));
+ document.getElementById("ruser").value="";
+ document.getElementById("rpass").value="";
+ alert("Registered Successfully");
+}
+
+function login(){
+ let u=document.getElementById("user").value.trim();
+ let p=document.getElementById("pass").value.trim();
+
+ let found=users.find(x=>x.username===u && x.password===p);
+ if(!found) return alert("Invalid Login");
+
+ otpCode=Math.floor(100000+Math.random()*900000);
+ alert("Your OTP: "+otpCode);
+}
+
+function verifyOTP(){
+ let o=document.getElementById("otp").value.trim();
+ let u=document.getElementById("user").value.trim();
+
+ if(o==otpCode){
+  localStorage.setItem("loginUser",u);
+  location=(u=="admin")?"admin.html":"dashboard.html";
+ } else alert("Wrong OTP");
+}
+
+function logout(){localStorage.clear();location="index.html";}
+
+/* ================= AI CATEGORY ================= */
 function getCategory(desc){
  desc=desc.toLowerCase();
  if(desc.includes("hostel")) return "Hostel";
@@ -13,33 +49,7 @@ function getCategory(desc){
  return "General";
 }
 
-/* =============== AUTH ================= */
-function register(){
- let ru=ruser.value.trim(), rp=rpass.value.trim();
- if(!ru||!rp) return alert("Fill all");
- users.push({username:ru,password:rp});
- localStorage.setItem("users",JSON.stringify(users));
- ruser.value=rpass.value="";
- alert("Registered");
-}
-
-function login(){
- let found=users.find(x=>x.username===user.value.trim() && x.password===pass.value.trim());
- if(!found) return alert("Invalid Login");
- otpCode=Math.floor(100000+Math.random()*900000);
- alert("OTP: "+otpCode);
-}
-
-function verifyOTP(){
- if(otp.value==otpCode){
-  localStorage.setItem("loginUser",user.value);
-  location=(user.value=="admin")?"admin.html":"dashboard.html";
- } else alert("Wrong OTP");
-}
-
-function logout(){localStorage.clear();location="index.html";}
-
-/* =============== ADD COMPLAINT ================= */
+/* ================= ADD COMPLAINT ================= */
 function addComplaint(){
  let pri=priority.value;
  let sla = pri=="High"?2:pri=="Medium"?4:7;
@@ -62,7 +72,7 @@ function addComplaint(){
  loadMy();
 }
 
-/* =============== STUDENT VIEW ================= */
+/* ================= STUDENT VIEW ================= */
 function loadMy(){
  if(!myComplaints) return;
  let u=localStorage.getItem("loginUser");
@@ -78,7 +88,7 @@ function loadMy(){
  checkNotify();
 }
 
-/* =============== ADMIN VIEW ================= */
+/* ================= ADMIN VIEW ================= */
 function loadAdmin(){
  if(!adminList) return;
  adminList.innerHTML=""; closedList.innerHTML="";
@@ -107,7 +117,7 @@ function loadAdmin(){
  loadChart();
 }
 
-/* =============== SAVE STATUS ================= */
+/* ================= SAVE STATUS ================= */
 function saveStatus(i){
  complaints[i].status=document.getElementById("status"+i).value;
  complaints[i].notified=false;
@@ -115,7 +125,7 @@ function saveStatus(i){
  loadAdmin();
 }
 
-/* =============== CHART ================= */
+/* ================= CHART ================= */
 function loadChart(){
  if(!chart) return;
  let p=complaints.filter(c=>c.status=="Pending").length;
@@ -127,7 +137,7 @@ function loadChart(){
  });
 }
 
-/* =============== NOTIFICATION ================= */
+/* ================= NOTIFICATION ================= */
 function checkNotify(){
  let u=localStorage.getItem("loginUser");
  if(!u||!notifyCount) return;
@@ -135,10 +145,10 @@ function checkNotify(){
  notifyCount.innerText=n;
 }
 
-/* =============== DARK MODE ================= */
+/* ================= DARK MODE ================= */
 function toggleDark(){document.body.classList.toggle("dark");}
 
-/* =============== AUTO DAY COUNTER ================= */
+/* ================= AUTO DAY COUNTER ================= */
 window.addEventListener("load",()=>{
  complaints.forEach(c=>{ if(c.status!="Resolved") c.days++; });
  localStorage.setItem("complaints",JSON.stringify(complaints));
