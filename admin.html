@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
+<title>Admin Dashboard</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div class="notify">
- 🔔 <span id="notifyCount">0</span>
-</div>
+
+<div class="notify">🔔 <span id="notifyCount">0</span></div>
 
 <div class="card wide">
 
 <button onclick="toggleDark()">🌙 Dark Mode</button>
 <h2>Admin Dashboard</h2>
 
-<button onclick="exportExcel()">⬇ Export Excel</button>
-<button onclick="exportPDF()">⬇ Export PDF</button>
-
-<select id="deptFilter" onchange="loadAdmin()">
+<select id="deptFilter">
 <option value="">All Departments</option>
 <option>Computer</option>
 <option>Mechanical</option>
@@ -28,30 +23,14 @@
 <option>Electronics</option>
 </select>
 
-<input id="search" placeholder="Search by Username" onkeyup="loadAdmin()">
+<input id="search" placeholder="Search Username" onkeyup="loadAdmin()">
 
-<center>
-<canvas id="chart" width="200" height="200"></canvas>
- <canvas id="barChart" height="120"></canvas>
+<canvas id="chart" height="150"></canvas>
+<canvas id="barChart" height="120"></canvas>
 
-<h4>Resolved Percentage</h4>
-<div class="meter">
-  <div id="solveBar">0%</div>
-</div>
-</center>
-
-<div class="stats-bar">
-  <div class="stat-box pending">Pending: <span id="pCount">0</span></div>
-  <div class="stat-box progress">In Progress: <span id="ipCount">0</span></div>
-  <div class="stat-box resolved">Resolved: <span id="rCount">0</span></div>
-  <div class="stat-box cancel">Cancelled: <span id="cCount">0</span></div>
-</div>
-
-<h3>All Complaints</h3>
 <div id="adminList"></div>
 
 <button onclick="logout()">Logout</button>
-
 </div>
 
 <script src="app.js"></script>
