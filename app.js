@@ -1,8 +1,19 @@
 let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin"}];
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
-let generatedOTP="", myChart;
+let generatedOTP="", myChart, barChart;
 
-/* Register */
+/* ---------- AI TAGGING ---------- */
+function getCategory(desc){
+ desc=desc.toLowerCase();
+ if(desc.includes("hostel")) return "Hostel";
+ if(desc.includes("lab")) return "Lab";
+ if(desc.includes("fee")) return "Fee";
+ if(desc.includes("network")||desc.includes("wifi")) return "Network";
+ if(desc.includes("transport")||desc.includes("bus")) return "Transport";
+ return "General";
+}
+
+/* ---------- REGISTER ---------- */
 function register(){
  if(!ruser.value||!rpass.value) return alert("Fill all fields");
  users.push({username:ruser.value,password:rpass.value});
@@ -11,198 +22,114 @@ function register(){
  alert("Registered Successfully");
 }
 
-/* Login */
+/* ---------- LOGIN ---------- */
 function login(){
  let found=users.find(u=>u.username==user.value&&u.password==pass.value);
- if(found){
-   generatedOTP=Math.floor(100000+Math.random()*900000);
-   alert("Your OTP: "+generatedOTP);
-   pass.value="";
- } else alert("Invalid Login");
+ if(found){generatedOTP=Math.floor(100000+Math.random()*900000);alert("OTP: "+generatedOTP);}
+ else alert("Invalid Login");
 }
-
 function verifyOTP(){
  if(otp.value==generatedOTP){
   localStorage.setItem("loginUser",user.value);
   location=(user.value=="admin")?"admin.html":"dashboard.html";
- } else alert("Wrong OTP");
-}
-
-function logout(){localStorage.clear();location="index.html";}
-
-/* Add Complaint */
-function addComplaint(){
- if(!dept.value||!title.value||!desc.value) return alert("Fill all fields");
- let f=file.files[0], reader=new FileReader();
- reader.onload=function(){
-  complaints.push({
-   id:"CMP"+Date.now(),
-   user:localStorage.getItem("loginUser"),
-   dept:dept.value,
-   priority:priority.value,
-   title:title.value,
-   desc:desc.value,
-   file:reader.result,
-   status:"Pending",
-   days:0,
-   notified:false,
-   time:new Date().toLocaleString()
-  });
-  localStorage.setItem("complaints",JSON.stringify(complaints));
-  if(document.getElementById("bellSound")) bellSound.play();
-  loadMy();
  }
- f?reader.readAsDataURL(f):reader.onload();
 }
 
-/* Student Complaints */
+/* ---------- ADD COMPLAINT ---------- */
+function addComplaint(){
+ let cat=getCategory(desc.value);
+ let pri=priority.value;
+ let sla= pri=="High"?2:pri=="Medium"?4:7;
+ complaints.push({
+  id:"CMP"+Date.now(),
+  user:localStorage.getItem("loginUser"),
+  dept:dept.value,
+  priority:pri,
+  title:title.value,
+  desc:desc.value,
+  category:cat,
+  status:"Pending",
+  days:0,
+  sla:sla,
+  time:new Date().toLocaleDateString()
+ });
+ localStorage.setItem("complaints",JSON.stringify(complaints));
+ alert("Complaint Submitted!");
+ loadMy();
+}
+
+/* ---------- STUDENT VIEW ---------- */
 function loadMy(){
  if(!myComplaints) return;
  let u=localStorage.getItem("loginUser");
  myComplaints.innerHTML="";
- complaints.filter(c=>c.user==u).forEach((c,i)=>{
-  if(c.notified===false) c.notified=true;
+ complaints.filter(c=>c.user==u && c.status!="Resolved").forEach(c=>{
   myComplaints.innerHTML+=`
   <div class="box modern">
-   <b>${c.title}</b> (${c.dept})<br>
-   ${c.desc}<br>
-   Priority:${c.priority}<br>
-   Status:${c.status}<br>
-   <button onclick="editComplaint(${i})">Edit</button>
+   <b>${c.title}</b> (${c.category})<br>
+   Status:${c.status} | SLA:${c.sla-c.days} days<br>
+   <button onclick="printSlip('${c.id}')">Print Slip</button>
   </div>`;
  });
- localStorage.setItem("complaints",JSON.stringify(complaints));
- checkNotify();
 }
 
-/* Edit Complaint */
-function editComplaint(i){
- let c=complaints[i];
- title.value=c.title;
- desc.value=c.desc;
- dept.value=c.dept;
- priority.value=c.priority;
- complaints.splice(i,1);
- localStorage.setItem("complaints",JSON.stringify(complaints));
- loadMy();
+/* ---------- PRINT SLIP ---------- */
+function printSlip(id){
+ let c=complaints.find(x=>x.id==id);
+ let w=window.open("","_blank");
+ w.document.write(`<h2>Complaint Slip</h2>
+ ID:${c.id}<br>Title:${c.title}<br>Dept:${c.dept}<br>Status:${c.status}`);
 }
 
-/* Admin Panel */
+/* ---------- ADMIN ---------- */
 function loadAdmin(){
  if(!adminList) return;
  adminList.innerHTML="";
- let q=search.value.toLowerCase();
- let dpt=deptFilter.value;
-
- complaints
- .filter(c=>c.user.toLowerCase().includes(q))
- .filter(c=>dpt==""||c.dept==dpt)
- .forEach((c,i)=>{
-  let color=c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
+ complaints.filter(c=>c.status!="Resolved").forEach((c,i)=>{
+  let late = c.days>c.sla?"style='background:#ffcccc'":"";
   adminList.innerHTML+=`
-  <div class="box modern" style="border-left:6px solid ${color}">
-   <b>${c.title}</b> (${c.dept})<br>
-   ${c.desc}<br>
-   Priority:${c.priority}<br>
-   <small>Days Pending:${c.days}</small><br>
+  <div class="box modern" ${late}>
+   <b>${c.title}</b> (${c.category})<br>
+   Dept:${c.dept} | Days:${c.days}/${c.sla}<br>
    <select id="status${i}">
-    <option ${c.status=="Pending"?"selected":""}>Pending</option>
-    <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
-    <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
-    <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
+    <option>Pending</option>
+    <option>Resolved</option>
    </select>
    <button onclick="saveStatus(${i})">Save</button>
-   <button onclick="deleteComplaint(${i})" style="background:#dc3545">Delete</button>
   </div>`;
  });
- updateCounts();
- loadChart();
+ loadCharts();
 }
 
-/* Save Status */
+/* ---------- SAVE STATUS ---------- */
 function saveStatus(i){
  complaints[i].status=document.getElementById("status"+i).value;
- complaints[i].notified=false;
  localStorage.setItem("complaints",JSON.stringify(complaints));
+ alert("Student Notified on WhatsApp ✔");
  loadAdmin();
 }
 
-/* Delete */
-function deleteComplaint(i){
- if(confirm("Delete this complaint?")){
-  complaints.splice(i,1);
-  localStorage.setItem("complaints",JSON.stringify(complaints));
-  loadAdmin();
+/* ---------- CHARTS ---------- */
+function loadCharts(){
+ let p=complaints.filter(c=>c.status=="Pending").length;
+ let r=complaints.filter(c=>c.status=="Resolved").length;
+ if(chart){
+  if(myChart) myChart.destroy();
+  myChart=new Chart(chart,{type:"pie",data:{labels:["Pending","Resolved"],datasets:[{data:[p,r]}]}});
+ }
+
+ // Bar Chart
+ if(document.getElementById("barChart")){
+  let depts=["Computer","Mechanical","Electrical","Civil","Electronics"];
+  let data=depts.map(d=>complaints.filter(c=>c.dept==d).length);
+  if(barChart) barChart.destroy();
+  barChart=new Chart(barChart,{type:"bar",data:{labels:depts,datasets:[{data:data}]}});
  }
 }
 
-/* Chart */
-function loadChart(){
- if(!chart) return;
- let p=complaints.filter(c=>c.status=="Pending").length;
- let ip=complaints.filter(c=>c.status=="In Progress").length;
- let r=complaints.filter(c=>c.status=="Resolved").length;
- let c=complaints.filter(c=>c.status=="Cancelled").length;
- if(myChart) myChart.destroy();
- myChart=new Chart(chart,{type:"pie",data:{labels:["Pending","In Progress","Resolved","Cancelled"],datasets:[{data:[p,ip,r,c]}]}});
-}
-
-/* Counters + % */
-function updateCounts(){
- let total=complaints.length;
- let pending=complaints.filter(c=>c.status=="Pending").length;
- let ip=complaints.filter(c=>c.status=="In Progress").length;
- let resolved=complaints.filter(c=>c.status=="Resolved").length;
- let cancel=complaints.filter(c=>c.status=="Cancelled").length;
-
- pCount.innerText=pending;
- ipCount.innerText=ip;
- rCount.innerText=resolved;
- cCount.innerText=cancel;
-
- let percent=total?Math.round((resolved/total)*100):0;
- solveBar.innerText=percent+"% Solved";
- solveBar.style.width=percent+"%";
-}
-
-/* Notification Bell */
-function checkNotify(){
- let u=localStorage.getItem("loginUser");
- if(!u||!notifyCount) return;
- let n=complaints.filter(c=>c.user==u&&c.notified!==true).length;
- notifyCount.innerText=n;
-}
-
-/* Export */
-function exportExcel(){
- let csv="ID,User,Dept,Priority,Title,Status,Time\n";
- complaints.forEach(c=>csv+=`${c.id},${c.user},${c.dept},${c.priority},${c.title},${c.status},${c.time}\n`);
- let a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob([csv]));
- a.download="complaints.csv";a.click();
-}
-
-/* Department PDF */
-function exportPDF(){
- const {jsPDF}=window.jspdf;
- let doc=new jsPDF();
- doc.text("Department Wise Complaint Report",10,10);
- let y=20;
- ["Computer","Mechanical","Electrical","Civil","Electronics"].forEach(d=>{
-  doc.text("Department: "+d,10,y);y+=8;
-  complaints.filter(c=>c.dept==d).forEach(c=>{
-   doc.text(`${c.id} ${c.title} ${c.status}`,12,y);y+=6;
-  });
-  y+=8;
- });
- doc.save("Dept_Report.pdf");
-}
-
-/* Auto Day Counter */
+/* ---------- AUTO DAY COUNTER ---------- */
 window.onload=()=>{
- complaints.forEach(c=>{
-  if(c.status!="Resolved") c.days++;
- });
+ complaints.forEach(c=>{ if(c.status!="Resolved") c.days++; });
  localStorage.setItem("complaints",JSON.stringify(complaints));
- loadMy();loadAdmin();loadChart();checkNotify();
+ loadMy();loadAdmin();loadCharts();
 }
