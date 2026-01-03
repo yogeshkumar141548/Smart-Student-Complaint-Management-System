@@ -5,27 +5,21 @@ let generatedOTP="", myChart;
 /* Register */
 function register(){
  if(!ruser.value||!rpass.value) return alert("Fill all fields");
-
  users.push({username:ruser.value,password:rpass.value});
  localStorage.setItem("users",JSON.stringify(users));
-
- ruser.value="";
- rpass.value="";
-
+ ruser.value=""; rpass.value="";
  alert("Registered Successfully");
 }
-
 
 /* Login */
 function login(){
  let found=users.find(u=>u.username==user.value&&u.password==pass.value);
  if(found){
-  generatedOTP=Math.floor(100000+Math.random()*900000);
-  alert("Your OTP: "+generatedOTP);
-  pass.value="";
+   generatedOTP=Math.floor(100000+Math.random()*900000);
+   alert("Your OTP: "+generatedOTP);
+   pass.value="";
  } else alert("Invalid Login");
 }
-
 
 function verifyOTP(){
  if(otp.value==generatedOTP){
@@ -42,7 +36,7 @@ function addComplaint(){
  let f=file.files[0], reader=new FileReader();
  reader.onload=function(){
   complaints.push({
-   id:"CMP"+(complaints.length+1),
+   id:"CMP"+Date.now(),
    user:localStorage.getItem("loginUser"),
    dept:dept.value,
    priority:priority.value,
@@ -50,9 +44,12 @@ function addComplaint(){
    desc:desc.value,
    file:reader.result,
    status:"Pending",
+   days:0,
+   notified:false,
    time:new Date().toLocaleString()
   });
   localStorage.setItem("complaints",JSON.stringify(complaints));
+  if(document.getElementById("bellSound")) bellSound.play();
   loadMy();
  }
  f?reader.readAsDataURL(f):reader.onload();
@@ -63,50 +60,66 @@ function loadMy(){
  if(!myComplaints) return;
  let u=localStorage.getItem("loginUser");
  myComplaints.innerHTML="";
- complaints.filter(c=>c.user==u).forEach(c=>{
+ complaints.filter(c=>c.user==u).forEach((c,i)=>{
+  if(c.notified===false) c.notified=true;
   myComplaints.innerHTML+=`
   <div class="box modern">
    <b>${c.title}</b> (${c.dept})<br>
    ${c.desc}<br>
-   Priority: ${c.priority}<br>
-   Status: ${c.status}
+   Priority:${c.priority}<br>
+   Status:${c.status}<br>
+   <button onclick="editComplaint(${i})">Edit</button>
   </div>`;
  });
+ localStorage.setItem("complaints",JSON.stringify(complaints));
+ checkNotify();
+}
+
+/* Edit Complaint */
+function editComplaint(i){
+ let c=complaints[i];
+ title.value=c.title;
+ desc.value=c.desc;
+ dept.value=c.dept;
+ priority.value=c.priority;
+ complaints.splice(i,1);
+ localStorage.setItem("complaints",JSON.stringify(complaints));
+ loadMy();
 }
 
 /* Admin Panel */
 function loadAdmin(){
- if(!document.getElementById("adminList")) return;
-
+ if(!adminList) return;
  adminList.innerHTML="";
-
- let q = search ? search.value.toLowerCase() : "";
- let dpt = deptFilter ? deptFilter.value : "";
+ let q=search.value.toLowerCase();
+ let dpt=deptFilter.value;
 
  complaints
- .filter(c => c.user.toLowerCase().includes(q))
- .filter(c => dpt=="" || c.dept==dpt)
+ .filter(c=>c.user.toLowerCase().includes(q))
+ .filter(c=>dpt==""||c.dept==dpt)
  .forEach((c,i)=>{
+  let color=c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
   adminList.innerHTML+=`
-   <div class="box modern">
-    <b>${c.title}</b> (${c.dept})<br>
-    ${c.desc}<br>
-    Priority: ${c.priority}<br>
-    <select id="status${i}">
-     <option ${c.status=="Pending"?"selected":""}>Pending</option>
-     <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
-     <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
-     <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
-    </select>
-    <button onclick="saveStatus(${i})">Save</button>
-    <button onclick="deleteComplaint(${i})" style="background:#dc3545">Delete</button>
-   </div>`;
+  <div class="box modern" style="border-left:6px solid ${color}">
+   <b>${c.title}</b> (${c.dept})<br>
+   ${c.desc}<br>
+   Priority:${c.priority}<br>
+   <small>Days Pending:${c.days}</small><br>
+   <select id="status${i}">
+    <option ${c.status=="Pending"?"selected":""}>Pending</option>
+    <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
+    <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
+    <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
+   </select>
+   <button onclick="saveStatus(${i})">Save</button>
+   <button onclick="deleteComplaint(${i})" style="background:#dc3545">Delete</button>
+  </div>`;
  });
-
  updateCounts();
  loadChart();
 }
 
+/* Save Status */
 function saveStatus(i){
  complaints[i].status=document.getElementById("status"+i).value;
  complaints[i].notified=false;
@@ -114,8 +127,7 @@ function saveStatus(i){
  loadAdmin();
 }
 
-}
-
+/* Delete */
 function deleteComplaint(i){
  if(confirm("Delete this complaint?")){
   complaints.splice(i,1);
@@ -132,14 +144,10 @@ function loadChart(){
  let r=complaints.filter(c=>c.status=="Resolved").length;
  let c=complaints.filter(c=>c.status=="Cancelled").length;
  if(myChart) myChart.destroy();
- myChart=new Chart(chart,{
-   type:"pie",
-   data:{labels:["Pending","In Progress","Resolved","Cancelled"],
-   datasets:[{data:[p,ip,r,c]}]}
- });
+ myChart=new Chart(chart,{type:"pie",data:{labels:["Pending","In Progress","Resolved","Cancelled"],datasets:[{data:[p,ip,r,c]}]}});
 }
 
-/* Status Counter + Percentage */
+/* Counters + % */
 function updateCounts(){
  let total=complaints.length;
  let pending=complaints.filter(c=>c.status=="Pending").length;
@@ -152,9 +160,17 @@ function updateCounts(){
  rCount.innerText=resolved;
  cCount.innerText=cancel;
 
- let percent= total ? Math.round((resolved/total)*100) : 0;
+ let percent=total?Math.round((resolved/total)*100):0;
  solveBar.innerText=percent+"% Solved";
  solveBar.style.width=percent+"%";
+}
+
+/* Notification Bell */
+function checkNotify(){
+ let u=localStorage.getItem("loginUser");
+ if(!u||!notifyCount) return;
+ let n=complaints.filter(c=>c.user==u&&c.notified!==true).length;
+ notifyCount.innerText=n;
 }
 
 /* Export */
@@ -166,48 +182,27 @@ function exportExcel(){
  a.download="complaints.csv";a.click();
 }
 
+/* Department PDF */
 function exportPDF(){
  const {jsPDF}=window.jspdf;
- let doc=new jsPDF(),y=15;
- doc.text("GLA University Complaint Report",10,10);
- complaints.forEach(c=>{
-  doc.text(`ID:${c.id} User:${c.user} Dept:${c.dept} Priority:${c.priority}`,10,y);y+=7;
-  doc.text(`Title:${c.title} Status:${c.status}`,10,y);y+=10;
+ let doc=new jsPDF();
+ doc.text("Department Wise Complaint Report",10,10);
+ let y=20;
+ ["Computer","Mechanical","Electrical","Civil","Electronics"].forEach(d=>{
+  doc.text("Department: "+d,10,y);y+=8;
+  complaints.filter(c=>c.dept==d).forEach(c=>{
+   doc.text(`${c.id} ${c.title} ${c.status}`,12,y);y+=6;
+  });
+  y+=8;
  });
- doc.save("Complaint_Report.pdf");
+ doc.save("Dept_Report.pdf");
 }
 
-/* Dark Mode */
-function toggleDark(){document.body.classList.toggle("dark");}
-
-function loadMy(){
- if(!myComplaints) return;
- let u=localStorage.getItem("loginUser");
- myComplaints.innerHTML="";
- complaints.filter(c=>c.user==u).forEach(c=>{
-  if(c.notified===false) c.notified=true;
-  myComplaints.innerHTML+=`
-  <div class="box modern">
-   <b>${c.title}</b> (${c.dept})<br>
-   ${c.desc}<br>
-   Priority:${c.priority}<br>
-   Status:${c.status}
-  </div>`;
+/* Auto Day Counter */
+window.onload=()=>{
+ complaints.forEach(c=>{
+  if(c.status!="Resolved") c.days++;
  });
  localStorage.setItem("complaints",JSON.stringify(complaints));
- checkNotify();
+ loadMy();loadAdmin();loadChart();checkNotify();
 }
-
-function checkNotify(){
- let u=localStorage.getItem("loginUser");
- let n=complaints.filter(c=>c.user==u && c.notified!=true).length;
- if(notifyCount) notifyCount.innerText=n;
-}
-
-window.onload = () => {
- document.getElementById("loader")?.style.display="none";
- loadMy();
- loadAdmin();
- loadChart();
- checkNotify();
-};
