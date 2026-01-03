@@ -6,10 +6,8 @@
 </head>
 <body>
 
-<!-- Loader -->
 <div id="loader"><div class="spinner"></div></div>
 
-<!-- Logo -->
 <div class="brand">
   <img src="logo.png">
   <h1>GLA University</h1>
@@ -24,11 +22,7 @@
 
 <input id="user" placeholder="Username">
 <input id="pass" type="password" placeholder="Password">
-
-<label class="eye">
- <input type="checkbox" onclick="pass.type=this.checked?'text':'password'"> Show Password
-</label>
-
+<label><input type="checkbox" onclick="pass.type=this.checked?'text':'password'"> Show Password</label>
 <button onclick="login()">Login</button>
 
 <input id="otp" placeholder="Enter OTP">
@@ -39,16 +33,11 @@
 <h3>New Student Registration</h3>
 
 <input id="ruser" placeholder="Username">
-<input id="rpass" type="password" placeholder="Password">
-
-<label class="eye">
- <input type="checkbox" onclick="rpass.type=this.checked?'text':'password'"> Show Password
-</label>
-
+<input id="rpass" type="password">
+<label><input type="checkbox" onclick="rpass.type=this.checked?'text':'password'"> Show Password</label>
 <button onclick="register()">Register</button>
 
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
