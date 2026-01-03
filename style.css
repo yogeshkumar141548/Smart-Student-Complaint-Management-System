@@ -87,3 +87,7 @@ body.dark .box{
  background:#1e1e1e !important;
  color:white !important;
 }
+.card button{
+  position:static;
+  width:100%;
+}
