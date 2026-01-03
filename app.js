@@ -20,10 +20,12 @@ function register(){
 function login(){
  let found=users.find(u=>u.username==user.value&&u.password==pass.value);
  if(found){
-   generatedOTP=Math.floor(100000+Math.random()*900000);
-   alert("Your OTP: "+generatedOTP);
+  generatedOTP=Math.floor(100000+Math.random()*900000);
+  alert("Your OTP: "+generatedOTP);
+  pass.value="";
  } else alert("Invalid Login");
 }
+
 
 function verifyOTP(){
  if(otp.value==generatedOTP){
