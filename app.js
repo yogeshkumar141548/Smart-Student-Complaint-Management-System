@@ -181,3 +181,15 @@ window.addEventListener("load",()=>{
 function toggleDark(){
  document.body.classList.toggle("dark");
 }
+
+
+document.getElementById("loginBtn")?.addEventListener("click",function(){
+ let u=document.getElementById("user").value;
+ let p=document.getElementById("pass").value;
+
+ let found=users.find(x=>x.username===u && x.password===p);
+ if(!found){alert("Invalid Login");return;}
+
+ otpCode=Math.floor(100000+Math.random()*900000);
+ alert("Your OTP: "+otpCode);
+});
