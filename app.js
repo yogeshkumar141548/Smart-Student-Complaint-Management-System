@@ -73,24 +73,35 @@ function addComplaint(){
 
 /* ================= STUDENT VIEW ================= */
 function loadMy(){
- if(!myComplaints) return;
- let u=localStorage.getItem("loginUser");
- myComplaints.innerHTML=""; archive.innerHTML="";
- complaints.filter(c=>c.user==u).forEach((c,i)=>{
-  let box=`<div class="box">
-   <b>${c.title}</b> (${c.category})<br>
-   Dept:${c.dept} | Priority:${c.priority}<br>
-   Status:${c.status} | SLA:${c.sla-c.days} days<br>
-   ${c.file?`📎 ${c.file}<br>`:""}
-   <button onclick="editComplaint(${i})">✏ Edit</button>
-   <button onclick="deleteComplaint(${i})">🗑 Delete</button>
-   <button onclick="printSlip(${i})">🖨 Print</button>
+ let myComplaints = document.getElementById("myComplaints");
+ let archive = document.getElementById("archive");
+ if(!myComplaints || !archive) return;
+
+ let u = localStorage.getItem("loginUser");
+ myComplaints.innerHTML=""; 
+ archive.innerHTML="";
+
+ complaints.forEach((c,i)=>{
+  if(c.user !== u) return;
+
+  let box = `<div class="box">
+    <b>${c.title}</b> (${c.category})<br>
+    Dept:${c.dept} | Priority:${c.priority}<br>
+    Status:${c.status} | SLA:${c.sla-c.days} days<br>
+    ${c.file?`📎 ${c.file}<br>`:""}
+    <button onclick="editComplaint(${i})">✏ Edit</button>
+    <button onclick="deleteComplaint(${i})">🗑 Delete</button>
+    <button onclick="printSlip(${i})">🖨 Print</button>
   </div>`;
+
   if(c.status=="Resolved") archive.innerHTML+=box;
   else myComplaints.innerHTML+=box;
  });
- checkNotify(); updateSolved();
+
+ checkNotify(); 
+ updateSolved();
 }
+
 
 /* ================= ADMIN VIEW (FIXED) ================= */
 function loadAdmin(){
