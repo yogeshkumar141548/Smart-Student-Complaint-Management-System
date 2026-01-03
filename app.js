@@ -1,51 +1,54 @@
 let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin"}];
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
-let generatedOTP="", myChart;
+let otpCode="", myChart;
 
-/* AI CATEGORY */
+/* AI Category */
 function getCategory(desc){
  desc=desc.toLowerCase();
  if(desc.includes("hostel")) return "Hostel";
  if(desc.includes("lab")) return "Lab";
  if(desc.includes("fee")) return "Fee";
  if(desc.includes("wifi")||desc.includes("network")) return "Network";
- if(desc.includes("transport")||desc.includes("bus")) return "Transport";
+ if(desc.includes("bus")||desc.includes("transport")) return "Transport";
  return "General";
 }
 
 /* REGISTER */
 function register(){
- if(!ruser.value||!rpass.value) return alert("Fill all");
+ if(!ruser.value||!rpass.value) return alert("Fill all fields");
  users.push({username:ruser.value,password:rpass.value});
  localStorage.setItem("users",JSON.stringify(users));
  ruser.value=""; rpass.value="";
- alert("Registered");
+ alert("Registered Successfully");
 }
 
 /* LOGIN */
 function login(){
- let f=users.find(u=>u.username==user.value&&u.password==pass.value);
- if(f){
-  generatedOTP=Math.floor(100000+Math.random()*900000);
-  alert("OTP:"+generatedOTP);
- } else alert("Invalid Login");
+ let found = users.find(u=>u.username==user.value && u.password==pass.value);
+ if(!found) return alert("Invalid Login");
+ otpCode = Math.floor(100000+Math.random()*900000);
+ alert("Your OTP: "+otpCode);
 }
 
-/* VERIFY */
+/* VERIFY OTP */
 function verifyOTP(){
- if(otp.value==generatedOTP){
+ if(otp.value==otpCode){
   localStorage.setItem("loginUser",user.value);
-  location=(user.value=="admin")?"admin.html":"dashboard.html";
- }
+  location = (user.value=="admin")?"admin.html":"dashboard.html";
+ } else alert("Wrong OTP");
 }
 
 /* LOGOUT */
-function logout(){localStorage.clear();location="index.html";}
+function logout(){
+ localStorage.clear();
+ location="index.html";
+}
 
 /* ADD COMPLAINT */
 function addComplaint(){
  let pri=priority.value;
- let sla = pri=="High"?2 : pri=="Medium"?4 : 7;
+ let sla = pri=="High"?2:pri=="Medium"?4:7;
+
  complaints.push({
   id:"CMP"+Date.now(),
   user:localStorage.getItem("loginUser"),
@@ -70,12 +73,13 @@ function loadMy(){
  let u=localStorage.getItem("loginUser");
  myComplaints.innerHTML=""; archive.innerHTML="";
  complaints.filter(c=>c.user==u).forEach(c=>{
-  let box=`<div class="box modern">${c.title} (${c.category})<br>
-   Status:${c.status} | SLA:${c.sla-c.days} days</div>`;
+  let box=`<div class="box">
+   <b>${c.title}</b> (${c.category})<br>
+   Status:${c.status} | SLA:${c.sla-c.days} days
+  </div>`;
   if(c.status=="Resolved") archive.innerHTML+=box;
   else myComplaints.innerHTML+=box;
  });
- localStorage.setItem("complaints",JSON.stringify(complaints));
  checkNotify();
 }
 
@@ -83,13 +87,16 @@ function loadMy(){
 function loadAdmin(){
  if(!adminList) return;
  adminList.innerHTML=""; closedList.innerHTML="";
+ let q=search.value.toLowerCase();
+ let d=deptFilter.value;
+
  complaints
- .filter(c=>c.user.toLowerCase().includes(search.value.toLowerCase()))
- .filter(c=>deptFilter.value==""||c.dept==deptFilter.value)
+ .filter(c=>c.user.toLowerCase().includes(q))
+ .filter(c=>d==""||c.dept==d)
  .forEach((c,i)=>{
-  let color = c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
-  let late = c.days>c.sla ? "style='background:#ffcccc'" : "";
-  let box=`<div class="box modern" style="border-left:6px solid ${color}" ${late}>
+  let color=c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
+  let late = c.days>c.sla?"style='background:#ffcccc'":"";
+  let box=`<div class="box" style="border-left:6px solid ${color}" ${late}>
    <b>${c.title}</b> (${c.category})<br>
    Dept:${c.dept} | Priority:${c.priority}<br>
    Days:${c.days}/${c.sla}<br>
@@ -119,7 +126,10 @@ function loadChart(){
  let p=complaints.filter(c=>c.status=="Pending").length;
  let r=complaints.filter(c=>c.status=="Resolved").length;
  if(myChart) myChart.destroy();
- myChart=new Chart(chart,{type:"pie",data:{labels:["Pending","Resolved"],datasets:[{data:[p,r]}]}});
+ myChart=new Chart(chart,{
+  type:"pie",
+  data:{labels:["Pending","Resolved"],datasets:[{data:[p,r]}]}
+ });
 }
 
 /* NOTIFICATION */
@@ -134,6 +144,5 @@ function checkNotify(){
 window.addEventListener("load",()=>{
  complaints.forEach(c=>{ if(c.status!="Resolved") c.days++; });
  localStorage.setItem("complaints",JSON.stringify(complaints));
- document.getElementById("loader")?.style.display="none";
  loadMy(); loadAdmin(); loadChart(); checkNotify();
 });
