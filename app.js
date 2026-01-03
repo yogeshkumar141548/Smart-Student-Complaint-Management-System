@@ -7,14 +7,12 @@ function register(){
  let ru=document.getElementById("ruser").value.trim();
  let rp=document.getElementById("rpass").value.trim();
  if(!ru||!rp) return alert("Fill all");
-
  users.push({username:ru,password:rp});
  localStorage.setItem("users",JSON.stringify(users));
  document.getElementById("ruser").value="";
  document.getElementById("rpass").value="";
  alert("Registered Successfully");
 }
-
 function login(){
  let u=document.getElementById("user").value.trim();
  let p=document.getElementById("pass").value.trim();
@@ -23,7 +21,6 @@ function login(){
  otpCode=Math.floor(100000+Math.random()*900000);
  alert("Your OTP: "+otpCode);
 }
-
 function verifyOTP(){
  let o=document.getElementById("otp").value.trim();
  let u=document.getElementById("user").value.trim();
@@ -32,7 +29,6 @@ function verifyOTP(){
   location=(u=="admin")?"admin.html":"dashboard.html";
  } else alert("Wrong OTP");
 }
-
 function logout(){localStorage.clear();location="index.html";}
 
 /* ================= AI CATEGORY ================= */
@@ -59,6 +55,7 @@ function addComplaint(){
   title:title.value,
   desc:desc.value,
   category:getCategory(desc.value),
+  file: fileUpload?.files[0]?.name || "",
   status:"Pending",
   days:0,
   sla:sla,
@@ -74,15 +71,20 @@ function loadMy(){
  if(!myComplaints) return;
  let u=localStorage.getItem("loginUser");
  myComplaints.innerHTML=""; archive.innerHTML="";
- complaints.filter(c=>c.user==u).forEach(c=>{
+ complaints.filter(c=>c.user==u).forEach((c,i)=>{
   let box=`<div class="box">
    <b>${c.title}</b> (${c.category})<br>
-   Status:${c.status} | SLA:${c.sla-c.days} days
+   Dept:${c.dept} | Priority:${c.priority}<br>
+   Status:${c.status} | SLA:${c.sla-c.days} days<br>
+   ${c.file?`📎 ${c.file}<br>`:""}
+   <button onclick="editComplaint(${i})">✏ Edit</button>
+   <button onclick="deleteComplaint(${i})">🗑 Delete</button>
+   <button onclick="printSlip(${i})">🖨 Print</button>
   </div>`;
   if(c.status=="Resolved") archive.innerHTML+=box;
   else myComplaints.innerHTML+=box;
  });
- checkNotify();
+ checkNotify(); updateSolved();
 }
 
 /* ================= ADMIN VIEW ================= */
@@ -114,12 +116,64 @@ function loadAdmin(){
  loadChart();
 }
 
-/* ================= SAVE STATUS ================= */
-function saveStatus(i){
- complaints[i].status=document.getElementById("status"+i).value;
- complaints[i].notified=false;
- localStorage.setItem("complaints",JSON.stringify(complaints));
- loadAdmin();
+/* ================= EDIT / DELETE ================= */
+function deleteComplaint(i){
+ if(confirm("Delete this complaint?")){
+  complaints.splice(i,1);
+  localStorage.setItem("complaints",JSON.stringify(complaints));
+  loadMy(); loadAdmin();
+ }
+}
+
+function editComplaint(i){
+ let t=prompt("Edit Title",complaints[i].title);
+ let d=prompt("Edit Description",complaints[i].desc);
+ if(t&&d){
+  complaints[i].title=t;
+  complaints[i].desc=d;
+  localStorage.setItem("complaints",JSON.stringify(complaints));
+  loadMy(); loadAdmin();
+ }
+}
+
+/* ================= PRINT ================= */
+function printSlip(i){
+ let c=complaints[i];
+ let w=window.open("","print","width=400,height=500");
+ w.document.write(`<h3>GLA University</h3>
+  <p>ID:${c.id}</p><p>Student:${c.user}</p><p>Dept:${c.dept}</p>
+  <p>Title:${c.title}</p><p>Status:${c.status}</p><p>Time:${c.time}</p>`);
+ w.print();
+}
+
+/* ================= EXPORT ================= */
+function exportExcel(){
+ let csv="ID,User,Dept,Priority,Title,Status,Time\n";
+ complaints.forEach(c=>{
+  csv+=`${c.id},${c.user},${c.dept},${c.priority},${c.title},${c.status},${c.time}\n`;
+ });
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([csv]));
+ a.download="complaints.csv";
+ a.click();
+}
+
+function exportPDF(){
+ let html="<h2>GLA Complaint Report</h2>";
+ complaints.forEach(c=>{
+  html+=`<p>${c.id} | ${c.user} | ${c.title} | ${c.status}</p>`;
+ });
+ let w=window.open("");
+ w.document.write(html);
+ w.print();
+}
+
+/* ================= SOLVED METER ================= */
+function updateSolved(){
+ if(!solvedMeter) return;
+ let t=complaints.filter(c=>c.user==localStorage.getItem("loginUser")).length;
+ let r=complaints.filter(c=>c.user==localStorage.getItem("loginUser") && c.status=="Resolved").length;
+ solvedMeter.innerText=t?Math.round((r/t)*100)+"% Solved":"0% Solved";
 }
 
 /* ================= CHART ================= */
@@ -145,25 +199,9 @@ function checkNotify(){
 /* ================= DARK MODE ================= */
 function toggleDark(){document.body.classList.toggle("dark");}
 
-/* ================= EXPORT ================= */
-function exportExcel(){
- let csv="ID,User,Dept,Priority,Title,Status,Time\n";
- complaints.forEach(c=>{
-  csv+=`${c.id},${c.user},${c.dept},${c.priority},${c.title},${c.status},${c.time}\n`;
- });
- let a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob([csv]));
- a.download="complaints.csv";
- a.click();
-}
-
-function exportPDF(){
- alert("PDF export coming soon 🙂");
-}
-
 /* ================= AUTO DAY COUNTER ================= */
 window.addEventListener("load",()=>{
  complaints.forEach(c=>{ if(c.status!="Resolved") c.days++; });
  localStorage.setItem("complaints",JSON.stringify(complaints));
- loadMy(); loadAdmin(); loadChart(); checkNotify();
+ loadMy(); loadAdmin(); loadChart(); checkNotify(); updateSolved();
 });
