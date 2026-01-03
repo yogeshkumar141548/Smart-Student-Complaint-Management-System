@@ -1,53 +1,48 @@
-
 let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin"}];
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
 let otpCode="", myChart;
 
-/* ================= AUTH ================= */
+/* ===== AUTH ===== */
 function register(){
- let ru=document.getElementById("ruser").value.trim();
- let rp=document.getElementById("rpass").value.trim();
+ let ru=ruser.value.trim(), rp=rpass.value.trim();
  if(!ru||!rp) return alert("Fill all");
  users.push({username:ru,password:rp});
  localStorage.setItem("users",JSON.stringify(users));
- document.getElementById("ruser").value="";
- document.getElementById("rpass").value="";
+ ruser.value=rpass.value="";
  alert("Registered Successfully");
 }
+
 function login(){
- let u=document.getElementById("user").value.trim();
- let p=document.getElementById("pass").value.trim();
- let found=users.find(x=>x.username===u && x.password===p);
- if(!found){ alert("Invalid Login"); return; }
+ let found=users.find(u=>u.username===user.value.trim() && u.password===pass.value.trim());
+ if(!found) return alert("Invalid Login");
  otpCode=Math.floor(100000+Math.random()*900000);
  alert("Your OTP: "+otpCode);
 }
+
 function verifyOTP(){
- let o=document.getElementById("otp").value.trim();
- let u=document.getElementById("user").value.trim();
- if(o==otpCode){
-  localStorage.setItem("loginUser",u);
-  location=(u=="admin")?"admin.html":"dashboard.html";
+ if(otp.value==otpCode){
+  localStorage.setItem("loginUser",user.value);
+  location=(user.value=="admin")?"admin.html":"dashboard.html";
  } else alert("Wrong OTP");
 }
+
 function logout(){
  localStorage.removeItem("loginUser");
  location="index.html";
 }
 
-
-/* ================= AI CATEGORY ================= */
+/* ===== AI CATEGORY ===== */
 function getCategory(desc){
  desc=desc.toLowerCase();
  if(desc.includes("hostel")) return "Hostel";
  if(desc.includes("lab")) return "Lab";
  if(desc.includes("fee")) return "Fee";
  if(desc.includes("wifi")||desc.includes("network")) return "Network";
- if(desc.includes("transport")||desc.includes("bus")) return "Transport";
+ if(desc.includes("bus")||desc.includes("transport")) return "Transport";
  return "General";
 }
 
-/* ================= ADD COMPLAINT ================= */
+/* ===== ADD COMPLAINT ===== */
 function addComplaint(){
  let pri=priority.value;
  let sla = pri=="High"?2:pri=="Medium"?4:7;
@@ -60,89 +55,88 @@ function addComplaint(){
   title:title.value,
   desc:desc.value,
   category:getCategory(desc.value),
-  file: fileUpload?.files[0]?.name || "",
+  file:fileUpload?.files[0]?.name||"",
   status:"Pending",
   days:0,
   sla:sla,
-  notified:false,
   time:new Date().toLocaleString()
  });
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadMy();
 }
 
-/* ================= STUDENT VIEW ================= */
+/* ===== STUDENT VIEW ===== */
 function loadMy(){
- let myComplaints=document.getElementById("myComplaints");
- let archive=document.getElementById("archive");
- if(!myComplaints) return;
+ let my=document.getElementById("myComplaints");
+ let arch=document.getElementById("archive");
+ if(!my||!arch) return;
 
+ my.innerHTML=""; arch.innerHTML="";
  let u=localStorage.getItem("loginUser");
- myComplaints.innerHTML=""; archive.innerHTML="";
 
  complaints.forEach(c=>{
-  if(c.user!=u) return;
+  if(c.user!==u) return;
 
   let box=`<div class="box">
    <b>${c.title}</b> (${c.category})<br>
    Dept:${c.dept} | Priority:${c.priority}<br>
    Status:${c.status} | SLA:${c.sla-c.days} days<br>
    ${c.file?`📎 ${c.file}<br>`:""}
-   <button onclick="editComplaintById('${c.id}')">✏ Edit</button>
-   <button onclick="deleteComplaintById('${c.id}')">🗑 Delete</button>
-   <button onclick="printSlipById('${c.id}')">🖨 Print</button>
+   <button onclick="editById('${c.id}')">✏ Edit</button>
+   <button onclick="deleteById('${c.id}')">🗑 Delete</button>
+   <button onclick="printById('${c.id}')">🖨 Print</button>
   </div>`;
-  if(c.status=="Resolved") archive.innerHTML+=box;
-  else myComplaints.innerHTML+=box;
+  (c.status=="Resolved"?arch:my).innerHTML+=box;
  });
-
- checkNotify(); updateSolved();
+ updateSolved(); checkNotify();
 }
-function deleteComplaintById(id){
- complaints = complaints.filter(c=>c.id!=id);
+
+/* ===== EDIT / DELETE / PRINT ===== */
+function deleteById(id){
+ complaints=complaints.filter(c=>c.id!=id);
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadMy(); loadAdmin();
 }
 
-function editComplaintById(id){
+function editById(id){
  let c=complaints.find(x=>x.id==id);
  if(!c) return;
  let t=prompt("Edit Title",c.title);
  let d=prompt("Edit Description",c.desc);
  if(t&&d){
-  c.title=t;
-  c.desc=d;
+  c.title=t; c.desc=d;
   localStorage.setItem("complaints",JSON.stringify(complaints));
   loadMy(); loadAdmin();
  }
 }
 
-function printSlipById(id){
+function printById(id){
  let c=complaints.find(x=>x.id==id);
  let w=window.open("","print","width=400,height=500");
  w.document.write(`<h3>GLA University</h3>
-  <p>ID:${c.id}</p><p>Student:${c.user}</p><p>Dept:${c.dept}</p>
+  <p>ID:${c.id}</p><p>User:${c.user}</p><p>Dept:${c.dept}</p>
   <p>Title:${c.title}</p><p>Status:${c.status}</p><p>Time:${c.time}</p>`);
  w.print();
 }
 
-
-/* ================= ADMIN VIEW (FIXED) ================= */
+/* ===== ADMIN VIEW ===== */
 function loadAdmin(){
- if(!adminList) return;
- adminList.innerHTML=""; 
- closedList.innerHTML="";
+ let admin=document.getElementById("adminList");
+ let closed=document.getElementById("closedList");
+ let s=document.getElementById("search");
+ let d=document.getElementById("deptFilter");
+ if(!admin||!closed) return;
 
- let q = search.value.trim().toLowerCase();
- let d = deptFilter.value;
+ admin.innerHTML=""; closed.innerHTML="";
+ let q=s?s.value.toLowerCase():"";
+ let dep=d?d.value:"";
 
  complaints
-  .filter(c => q=="" || c.user.toLowerCase().includes(q))
-  .filter(c => d=="" || c.dept==d)
+  .filter(c=>q==""||c.user.toLowerCase().includes(q))
+  .filter(c=>dep==""||c.dept==dep)
   .forEach((c,i)=>{
-   let color = c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
-   let late  = c.days>c.sla?"style='background:#ffcccc'":"";
-
+   let color=c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
+   let late=c.days>c.sla?"style='background:#ffcccc'":"";
    let box=`<div class="box" style="border-left:6px solid ${color}" ${late}>
     <b>${c.title}</b> (${c.category})<br>
     Dept:${c.dept} | Priority:${c.priority}<br>
@@ -153,95 +147,59 @@ function loadAdmin(){
     </select>
     <button onclick="saveStatus(${i})">Save</button>
    </div>`;
-
-   if(c.status=="Resolved") closedList.innerHTML+=box;
-   else adminList.innerHTML+=box;
+   (c.status=="Resolved"?closed:admin).innerHTML+=box;
   });
 
  loadChart();
 }
 
-/* ================= SAVE STATUS ================= */
 function saveStatus(i){
  complaints[i].status=document.getElementById("status"+i).value;
- complaints[i].notified=false;
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadAdmin();
 }
 
-/* ================= PRINT ================= */
-function printSlip(i){
- let c=complaints[i];
- let w=window.open("","print","width=400,height=500");
- w.document.write(`<h3>GLA University</h3>
-  <p>ID:${c.id}</p><p>Student:${c.user}</p><p>Dept:${c.dept}</p>
-  <p>Title:${c.title}</p><p>Status:${c.status}</p><p>Time:${c.time}</p>`);
- w.print();
-}
-
-/* ================= EXPORT ================= */
+/* ===== EXPORT ===== */
 function exportExcel(){
  let csv="ID,User,Dept,Priority,Title,Status,Time\n";
- complaints.forEach(c=>{
-  csv+=`${c.id},${c.user},${c.dept},${c.priority},${c.title},${c.status},${c.time}\n`;
- });
+ complaints.forEach(c=>csv+=`${c.id},${c.user},${c.dept},${c.priority},${c.title},${c.status},${c.time}\n`);
  let a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob([csv]));
- a.download="complaints.csv";
- a.click();
+ a.href=URL.createObjectURL(new Blob([csv])); a.download="complaints.csv"; a.click();
 }
 
 function exportPDF(){
- let html="<h2>GLA Complaint Report</h2>";
- complaints.forEach(c=>{
-  html+=`<p>${c.id} | ${c.user} | ${c.title} | ${c.status}</p>`;
- });
  let w=window.open("");
- w.document.write(html);
+ w.document.write("<h2>GLA Complaint Report</h2>");
+ complaints.forEach(c=>w.document.write(`<p>${c.id} | ${c.user} | ${c.title} | ${c.status}</p>`));
  w.print();
 }
 
-/* ================= SOLVED METER ================= */
+/* ===== METER + CHART + NOTIFY ===== */
 function updateSolved(){
- if(!solvedMeter) return;
- let t=complaints.filter(c=>c.user==localStorage.getItem("loginUser")).length;
- let r=complaints.filter(c=>c.user==localStorage.getItem("loginUser") && c.status=="Resolved").length;
- solvedMeter.innerText=t?Math.round((r/t)*100)+"% Solved":"0% Solved";
-}
-
-/* ================= CHART ================= */
-function loadChart(){
- if(!chart) return;
- let p=complaints.filter(c=>c.status=="Pending").length;
- let r=complaints.filter(c=>c.status=="Resolved").length;
- if(myChart) myChart.destroy();
- myChart=new Chart(chart,{
-  type:"pie",
-  data:{labels:["Pending","Resolved"],datasets:[{data:[p,r]}]}
- });
-}
-
-/* ================= NOTIFICATION ================= */
-function checkNotify(){
+ let m=document.getElementById("solvedMeter");
+ if(!m) return;
  let u=localStorage.getItem("loginUser");
- if(!u||!notifyCount) return;
- let n=complaints.filter(c=>c.user==u && c.notified!==true).length;
- notifyCount.innerText=n;
+ let t=complaints.filter(c=>c.user==u).length;
+ let r=complaints.filter(c=>c.user==u&&c.status=="Resolved").length;
+ m.innerText=t?Math.round(r/t*100)+"% Solved":"0% Solved";
 }
 
-/* ================= DARK MODE ================= */
+function loadChart(){
+ let c=document.getElementById("chart");
+ if(!c) return;
+ let p=complaints.filter(x=>x.status=="Pending").length;
+ let r=complaints.filter(x=>x.status=="Resolved").length;
+ if(myChart) myChart.destroy();
+ myChart=new Chart(c,{type:"pie",data:{labels:["Pending","Resolved"],datasets:[{data:[p,r]}]}});
+}
+
+function checkNotify(){
+ let n=document.getElementById("notifyCount");
+ let u=localStorage.getItem("loginUser");
+ if(!n||!u) return;
+ n.innerText=complaints.filter(c=>c.user==u&&c.status!="Resolved").length;
+}
+
 function toggleDark(){document.body.classList.toggle("dark");}
 
-/* ================= AUTO DAY COUNTER ================= */
-window.addEventListener("load",()=>{
- complaints.forEach(c=>{ if(c.status!="Resolved") c.days++; });
- localStorage.setItem("complaints",JSON.stringify(complaints));
- loadMy(); loadAdmin(); loadChart(); checkNotify(); updateSolved();
-});
-
-
-
-document.addEventListener("DOMContentLoaded",()=>{
- if(document.getElementById("adminList")) loadAdmin();
-});
-
+window.onload=()=>{ loadMy(); loadAdmin(); loadChart(); updateSolved(); checkNotify(); };
