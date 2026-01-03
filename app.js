@@ -5,10 +5,16 @@ let generatedOTP="", myChart;
 /* Register */
 function register(){
  if(!ruser.value||!rpass.value) return alert("Fill all fields");
+
  users.push({username:ruser.value,password:rpass.value});
  localStorage.setItem("users",JSON.stringify(users));
+
+ ruser.value="";
+ rpass.value="";
+
  alert("Registered Successfully");
 }
+
 
 /* Login */
 function login(){
@@ -68,27 +74,33 @@ function loadMy(){
 
 /* Admin Panel */
 function loadAdmin(){
- if(!adminList) return;
+ if(!document.getElementById("adminList")) return;
+
  adminList.innerHTML="";
+
+ let q = search ? search.value.toLowerCase() : "";
+ let dpt = deptFilter ? deptFilter.value : "";
+
  complaints
- .filter(c=>c.user.toLowerCase().includes(search.value.toLowerCase()))
- .filter(c=>deptFilter.value==""||c.dept==deptFilter.value)
+ .filter(c => c.user.toLowerCase().includes(q))
+ .filter(c => dpt=="" || c.dept==dpt)
  .forEach((c,i)=>{
   adminList.innerHTML+=`
-  <div class="box modern">
-   <b>${c.title}</b> (${c.dept})<br>
-   ${c.desc}<br>
-   Priority: ${c.priority}<br>
-   <select id="status${i}">
-    <option ${c.status=="Pending"?"selected":""}>Pending</option>
-    <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
-    <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
-    <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
-   </select>
-   <button onclick="saveStatus(${i})">Save</button>
-   <button onclick="deleteComplaint(${i})" style="background:#dc3545">Delete</button>
-  </div>`;
+   <div class="box modern">
+    <b>${c.title}</b> (${c.dept})<br>
+    ${c.desc}<br>
+    Priority: ${c.priority}<br>
+    <select id="status${i}">
+     <option ${c.status=="Pending"?"selected":""}>Pending</option>
+     <option ${c.status=="In Progress"?"selected":""}>In Progress</option>
+     <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
+     <option ${c.status=="Cancelled"?"selected":""}>Cancelled</option>
+    </select>
+    <button onclick="saveStatus(${i})">Save</button>
+    <button onclick="deleteComplaint(${i})" style="background:#dc3545">Delete</button>
+   </div>`;
  });
+
  updateCounts();
  loadChart();
 }
