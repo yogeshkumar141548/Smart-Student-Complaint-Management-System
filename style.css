@@ -184,3 +184,17 @@ button::after{
 button:hover::after{
  left:100%;
 }
+.notify{
+ position:absolute;
+ top:15px;
+ right:20px;
+ font-size:22px;
+ cursor:pointer;
+}
+.notify span{
+ background:red;
+ color:white;
+ border-radius:50%;
+ padding:2px 7px;
+ font-size:12px;
+}
