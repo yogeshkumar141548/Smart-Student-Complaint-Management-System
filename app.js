@@ -178,3 +178,9 @@ function exportPDF(){
 function toggleDark(){document.body.classList.toggle("dark");}
 
 window.onload=()=>{loadMy();loadAdmin();loadChart();}
+window.onload = () => {
+ document.getElementById("loader").style.display="none";
+ loadMy();
+ loadAdmin();
+ loadChart();
+};
