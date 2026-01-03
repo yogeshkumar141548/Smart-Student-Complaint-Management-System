@@ -16,12 +16,9 @@
 
 <div class="card">
 
-<button onclick="toggleDark()">🌙 Dark Mode</button>
-
 <h2>Student Login</h2>
 <input id="user" placeholder="Username">
 <input id="pass" type="password">
-<label><input type="checkbox" onclick="pass.type=this.checked?'text':'password'"> Show Password</label>
 <button onclick="login()">Login</button>
 
 <input id="otp" placeholder="Enter OTP">
@@ -35,14 +32,10 @@
 <button onclick="register()">Register</button>
 
 </div>
- <script>
-window.onload = function(){
- document.getElementById("loader").style.display="none";
-}
-</script>
 
 <script src="app.js"></script>
-
-
+<script>
+window.onload = ()=>document.getElementById("loader").style.display="none";
+</script>
 </body>
 </html>
