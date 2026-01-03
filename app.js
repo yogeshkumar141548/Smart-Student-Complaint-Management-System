@@ -176,3 +176,8 @@ window.addEventListener("load",()=>{
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadMy(); loadAdmin(); loadChart(); checkNotify();
 });
+
+
+function toggleDark(){
+ document.body.classList.toggle("dark");
+}
