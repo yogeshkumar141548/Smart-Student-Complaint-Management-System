@@ -9,29 +9,31 @@ body{
  background-size:cover;
 }
 
-
+/* LOGO */
 .brand{
  position:fixed;
  top:20px;
  right:20px;
  text-align:center;
  color:white;
- z-index:1000;
+ z-index:9999;
 }
 .brand img{width:110px}
 
+/* CARD */
 .card{
  background:rgba(255,255,255,0.95);
- backdrop-filter:blur(10px);
+ backdrop-filter:blur(12px);
  width:380px;
  padding:30px;
- border-radius:18px;
+ border-radius:20px;
  box-shadow:0 15px 40px rgba(0,0,0,.4);
  margin-top:160px;
  text-align:center;
 }
-.wide{max-width:850px}
+.wide{max-width:900px}
 
+/* FORM */
 input,textarea,select{
  width:100%;
  padding:12px;
@@ -40,6 +42,7 @@ input,textarea,select{
  border:1px solid #ccc;
 }
 
+/* BUTTON */
 button{
  width:100%;
  padding:12px;
@@ -50,64 +53,31 @@ button{
  color:white;
  font-weight:bold;
  cursor:pointer;
+ transition:.3s;
 }
+button:hover{background:#084298;transform:scale(1.03)}
 
-button:hover{background:#084298}
-
+/* BOX */
 .box{
  background:white;
  padding:12px;
  margin:10px 0;
- border-radius:10px;
- box-shadow:0 4px 10px rgba(0,0,0,.2);
+ border-radius:12px;
+ box-shadow:0 4px 10px rgba(0,0,0,.25);
 }
 
+/* NOTIFICATION */
 .notify{
  position:fixed;
  top:20px;
  left:20px;
  font-size:22px;
+ cursor:pointer;
 }
-
 .notify span{
  background:red;
  color:white;
  border-radius:50%;
  padding:2px 7px;
  font-size:12px;
-}
-
-#loader{
- position:fixed;
- top:0;
- left:0;
- width:100%;
- height:100%;
- background:rgba(0,0,0,.6);
- display:flex;
- justify-content:center;
- align-items:center;
- z-index:10000;
- pointer-events:none;
-}
-
-.spinner{
- width:70px;
- height:70px;
- border:8px solid white;
- border-top:8px solid #0d6efd;
- border-radius:50%;
- animation:spin 1s linear infinite;
-}
-
-@keyframes spin{100%{transform:rotate(360deg)}}
-
-
-
-/* FIX LOADER STUCK + BLUR */
-#loader{
-  display:none !important;
-}
-.spinner{
-  display:none !important;
 }
