@@ -218,3 +218,34 @@ document.addEventListener("DOMContentLoaded",()=>{
  document.getElementById("addBtn")?.addEventListener("click",addComplaint);
 
 });
+document.addEventListener("DOMContentLoaded", function () {
+
+ let loginBtn = document.getElementById("loginBtn");
+ let verifyBtn = document.getElementById("verifyBtn");
+
+ if(loginBtn){
+  loginBtn.addEventListener("click", function(){
+    let u = document.getElementById("user").value.trim();
+    let p = document.getElementById("pass").value.trim();
+
+    let found = users.find(x=>x.username===u && x.password===p);
+    if(!found){ alert("Invalid Login"); return; }
+
+    otpCode = Math.floor(100000+Math.random()*900000);
+    alert("Your OTP: " + otpCode);
+  });
+ }
+
+ if(verifyBtn){
+  verifyBtn.addEventListener("click", function(){
+    let o = document.getElementById("otp").value.trim();
+    if(o === otpCode.toString()){
+      localStorage.setItem("loginUser", document.getElementById("user").value);
+      location = document.getElementById("user").value === "admin" ? "admin.html" : "dashboard.html";
+    } else {
+      alert("Wrong OTP");
+    }
+  });
+ }
+
+});
