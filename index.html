@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div id="loader"><div class="spinner"></div></div>
+<!-- LOADER REMOVED -->
 
 <div class="brand">
   <img src="logo.png">
@@ -16,20 +16,14 @@
 
 <div class="card">
    <button onclick="toggleDark()">🌙 Dark Mode</button>
-   <!-- baaki login form -->
-
 
 <h2>Student Login</h2>
 <input id="user" placeholder="Username">
 <input id="pass" type="password">
-<button type="button" id="loginBtn">Login</button>
-
-
+<button type="button" id="loginBtn" onclick="login()">Login</button>
 
 <input id="otp" placeholder="Enter OTP">
-<button type="button" id="verifyBtn">Verify OTP</button>
-
-
+<button type="button" id="verifyBtn" onclick="verifyOTP()">Verify OTP</button>
 
 <hr>
 
