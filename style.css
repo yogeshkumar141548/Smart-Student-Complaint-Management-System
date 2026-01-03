@@ -5,8 +5,10 @@ body{
  justify-content:center;
  align-items:center;
  font-family:Segoe UI;
- background:url("bg.jpg") no-repeat center/cover fixed;
+ background:url("gla.jpg") no-repeat center center fixed;
+ background-size:cover;
 }
+
 
 .brand{
  position:fixed;
