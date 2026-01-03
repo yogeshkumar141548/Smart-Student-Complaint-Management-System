@@ -73,33 +73,57 @@ function addComplaint(){
 
 /* ================= STUDENT VIEW ================= */
 function loadMy(){
- let myComplaints = document.getElementById("myComplaints");
- let archive = document.getElementById("archive");
- if(!myComplaints || !archive) return;
+ let myComplaints=document.getElementById("myComplaints");
+ let archive=document.getElementById("archive");
+ if(!myComplaints) return;
 
- let u = localStorage.getItem("loginUser");
- myComplaints.innerHTML=""; 
- archive.innerHTML="";
+ let u=localStorage.getItem("loginUser");
+ myComplaints.innerHTML=""; archive.innerHTML="";
 
- complaints.forEach((c,i)=>{
-  if(c.user !== u) return;
+ complaints.forEach(c=>{
+  if(c.user!=u) return;
 
-  let box = `<div class="box">
-    <b>${c.title}</b> (${c.category})<br>
-    Dept:${c.dept} | Priority:${c.priority}<br>
-    Status:${c.status} | SLA:${c.sla-c.days} days<br>
-    ${c.file?`📎 ${c.file}<br>`:""}
-    <button onclick="editComplaint(${i})">✏ Edit</button>
-    <button onclick="deleteComplaint(${i})">🗑 Delete</button>
-    <button onclick="printSlip(${i})">🖨 Print</button>
+  let box=`<div class="box">
+   <b>${c.title}</b> (${c.category})<br>
+   Dept:${c.dept} | Priority:${c.priority}<br>
+   Status:${c.status} | SLA:${c.sla-c.days} days<br>
+   ${c.file?`📎 ${c.file}<br>`:""}
+   <button onclick="editComplaintById('${c.id}')">✏ Edit</button>
+   <button onclick="deleteComplaintById('${c.id}')">🗑 Delete</button>
+   <button onclick="printSlipById('${c.id}')">🖨 Print</button>
   </div>`;
-
   if(c.status=="Resolved") archive.innerHTML+=box;
   else myComplaints.innerHTML+=box;
  });
 
- checkNotify(); 
- updateSolved();
+ checkNotify(); updateSolved();
+}
+function deleteComplaintById(id){
+ complaints = complaints.filter(c=>c.id!=id);
+ localStorage.setItem("complaints",JSON.stringify(complaints));
+ loadMy(); loadAdmin();
+}
+
+function editComplaintById(id){
+ let c=complaints.find(x=>x.id==id);
+ if(!c) return;
+ let t=prompt("Edit Title",c.title);
+ let d=prompt("Edit Description",c.desc);
+ if(t&&d){
+  c.title=t;
+  c.desc=d;
+  localStorage.setItem("complaints",JSON.stringify(complaints));
+  loadMy(); loadAdmin();
+ }
+}
+
+function printSlipById(id){
+ let c=complaints.find(x=>x.id==id);
+ let w=window.open("","print","width=400,height=500");
+ w.document.write(`<h3>GLA University</h3>
+  <p>ID:${c.id}</p><p>Student:${c.user}</p><p>Dept:${c.dept}</p>
+  <p>Title:${c.title}</p><p>Status:${c.status}</p><p>Time:${c.time}</p>`);
+ w.print();
 }
 
 
