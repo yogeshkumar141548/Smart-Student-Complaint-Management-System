@@ -1,3 +1,4 @@
+
 let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin"}];
 let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
 let otpCode="", myChart;
@@ -87,53 +88,46 @@ function loadMy(){
  checkNotify(); updateSolved();
 }
 
-/* ================= ADMIN VIEW ================= */
+/* ================= ADMIN VIEW (FIXED) ================= */
 function loadAdmin(){
  if(!adminList) return;
- adminList.innerHTML=""; closedList.innerHTML="";
- let q=search.value.toLowerCase();
- let d=deptFilter.value;
+ adminList.innerHTML=""; 
+ closedList.innerHTML="";
+
+ let q = search.value.trim().toLowerCase();
+ let d = deptFilter.value;
 
  complaints
- .filter(c=>c.user.toLowerCase().includes(q))
- .filter(c=>d==""||c.dept==d)
- .forEach((c,i)=>{
-  let color=c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
-  let late = c.days>c.sla?"style='background:#ffcccc'":"";
-  let box=`<div class="box" style="border-left:6px solid ${color}" ${late}>
-   <b>${c.title}</b> (${c.category})<br>
-   Dept:${c.dept} | Priority:${c.priority}<br>
-   Days:${c.days}/${c.sla}<br>
-   <select id="status${i}">
-    <option ${c.status=="Pending"?"selected":""}>Pending</option>
-    <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
-   </select>
-   <button onclick="saveStatus(${i})">Save</button>
-  </div>`;
-  if(c.status=="Resolved") closedList.innerHTML+=box;
-  else adminList.innerHTML+=box;
- });
+  .filter(c => q=="" || c.user.toLowerCase().includes(q))
+  .filter(c => d=="" || c.dept==d)
+  .forEach((c,i)=>{
+   let color = c.priority=="High"?"#dc3545":c.priority=="Medium"?"#f0ad4e":"#28a745";
+   let late  = c.days>c.sla?"style='background:#ffcccc'":"";
+
+   let box=`<div class="box" style="border-left:6px solid ${color}" ${late}>
+    <b>${c.title}</b> (${c.category})<br>
+    Dept:${c.dept} | Priority:${c.priority}<br>
+    Days:${c.days}/${c.sla}<br>
+    <select id="status${i}">
+     <option ${c.status=="Pending"?"selected":""}>Pending</option>
+     <option ${c.status=="Resolved"?"selected":""}>Resolved</option>
+    </select>
+    <button onclick="saveStatus(${i})">Save</button>
+   </div>`;
+
+   if(c.status=="Resolved") closedList.innerHTML+=box;
+   else adminList.innerHTML+=box;
+  });
+
  loadChart();
 }
 
-/* ================= EDIT / DELETE ================= */
-function deleteComplaint(i){
- if(confirm("Delete this complaint?")){
-  complaints.splice(i,1);
-  localStorage.setItem("complaints",JSON.stringify(complaints));
-  loadMy(); loadAdmin();
- }
-}
-
-function editComplaint(i){
- let t=prompt("Edit Title",complaints[i].title);
- let d=prompt("Edit Description",complaints[i].desc);
- if(t&&d){
-  complaints[i].title=t;
-  complaints[i].desc=d;
-  localStorage.setItem("complaints",JSON.stringify(complaints));
-  loadMy(); loadAdmin();
- }
+/* ================= SAVE STATUS ================= */
+function saveStatus(i){
+ complaints[i].status=document.getElementById("status"+i).value;
+ complaints[i].notified=false;
+ localStorage.setItem("complaints",JSON.stringify(complaints));
+ loadAdmin();
 }
 
 /* ================= PRINT ================= */
@@ -204,7 +198,4 @@ window.addEventListener("load",()=>{
  complaints.forEach(c=>{ if(c.status!="Resolved") c.days++; });
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadMy(); loadAdmin(); loadChart(); checkNotify(); updateSolved();
-});
-document.addEventListener("DOMContentLoaded", function(){
- loadAdmin();
 });
