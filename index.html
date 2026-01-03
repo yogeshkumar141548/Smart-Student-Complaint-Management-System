@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Smart Student Complaint System</title>
+<title>GLA University Complaint Portal</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- Loader -->
+<div id="loader"><div class="spinner"></div></div>
+
+<!-- Logo -->
 <div class="brand">
   <img src="logo.png">
   <h1>GLA University</h1>
   <p>Smart Complaint Management System</p>
 </div>
-
 
 <div class="card">
 
@@ -21,9 +24,10 @@
 
 <input id="user" placeholder="Username">
 <input id="pass" type="password" placeholder="Password">
-  <div class="eye">
-  <input type="checkbox" onclick="pass.type=this.checked?'text':'password'"> Show Password
-</div>
+
+<label class="eye">
+ <input type="checkbox" onclick="pass.type=this.checked?'text':'password'"> Show Password
+</label>
 
 <button onclick="login()">Login</button>
 
@@ -36,9 +40,10 @@
 
 <input id="ruser" placeholder="Username">
 <input id="rpass" type="password" placeholder="Password">
-  <div class="eye">
-  <input type="checkbox" onclick="pass.type=this.checked?'text':'password'"> Show Password
-</div>
+
+<label class="eye">
+ <input type="checkbox" onclick="rpass.type=this.checked?'text':'password'"> Show Password
+</label>
 
 <button onclick="register()">Register</button>
 
@@ -46,8 +51,4 @@
 
 <script src="app.js"></script>
 </body>
-  <div id="loader">
-  <div class="spinner"></div>
-</div>
-
 </html>
