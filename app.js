@@ -30,7 +30,11 @@ function verifyOTP(){
   location=(u=="admin")?"admin.html":"dashboard.html";
  } else alert("Wrong OTP");
 }
-function logout(){localStorage.clear();location="index.html";}
+function logout(){
+ localStorage.removeItem("loginUser");
+ location="index.html";
+}
+
 
 /* ================= AI CATEGORY ================= */
 function getCategory(desc){
