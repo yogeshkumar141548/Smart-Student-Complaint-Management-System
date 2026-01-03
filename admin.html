@@ -8,13 +8,15 @@
 <body>
 
 <div class="notify">🔔 <span id="notifyCount">0</span></div>
-<button onclick="toggleDark()" style="margin-bottom:10px">🌙 Dark Mode</button>
 
-<div class="card wide">
+<div class="card wide adminWrap">
 
-<h2>Admin Dashboard</h2>
+<div class="adminTop">
+  <h2>Admin Dashboard</h2>
+  <button onclick="toggleDark()" class="darkBtn">🌙 Dark Mode</button>
+</div>
 
-<div style="display:flex;gap:10px">
+<div class="filters">
  <input id="search" placeholder="Search Username" onkeyup="loadAdmin()">
  <select id="deptFilter" onchange="loadAdmin()">
   <option value="">All Departments</option>
@@ -26,7 +28,7 @@
  </select>
 </div>
 
-<canvas id="chart" height="150"></canvas>
+<canvas id="chart" height="120"></canvas>
 
 <h3>Open Complaints</h3>
 <div id="adminList"></div>
@@ -34,9 +36,11 @@
 <h3>Closed Complaints</h3>
 <div id="closedList"></div>
 
-<button onclick="exportExcel()">⬇ Export Excel</button>
-<button onclick="exportPDF()">⬇ Export PDF</button>
-<button onclick="logout()">Logout</button>
+<div class="adminActions">
+ <button onclick="exportExcel()">⬇ Export Excel</button>
+ <button onclick="exportPDF()">⬇ Export PDF</button>
+ <button onclick="logout()">Logout</button>
+</div>
 
 </div>
 
