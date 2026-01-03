@@ -101,3 +101,13 @@ button:hover{background:#084298}
 }
 
 @keyframes spin{100%{transform:rotate(360deg)}}
+
+
+
+/* FIX LOADER STUCK + BLUR */
+#loader{
+  display:none !important;
+}
+.spinner{
+  display:none !important;
+}
