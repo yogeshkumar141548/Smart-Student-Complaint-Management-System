@@ -200,3 +200,21 @@ document.getElementById("verifyBtn")?.addEventListener("click",function(){
   location=(document.getElementById("user").value=="admin")?"admin.html":"dashboard.html";
  }else alert("Wrong OTP");
 });
+
+
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+ /* Login */
+ document.getElementById("loginBtn")?.addEventListener("click",login);
+
+ /* OTP Verify */
+ document.getElementById("verifyBtn")?.addEventListener("click",verifyOTP);
+
+ /* Register */
+ document.getElementById("regBtn")?.addEventListener("click",register);
+
+ /* Add Complaint */
+ document.getElementById("addBtn")?.addEventListener("click",addComplaint);
+
+});
