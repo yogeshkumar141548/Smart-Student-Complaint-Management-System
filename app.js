@@ -18,10 +18,8 @@ function register(){
 function login(){
  let u=document.getElementById("user").value.trim();
  let p=document.getElementById("pass").value.trim();
-
  let found=users.find(x=>x.username===u && x.password===p);
- if(!found) return alert("Invalid Login");
-
+ if(!found){ alert("Invalid Login"); return; }
  otpCode=Math.floor(100000+Math.random()*900000);
  alert("Your OTP: "+otpCode);
 }
@@ -29,7 +27,6 @@ function login(){
 function verifyOTP(){
  let o=document.getElementById("otp").value.trim();
  let u=document.getElementById("user").value.trim();
-
  if(o==otpCode){
   localStorage.setItem("loginUser",u);
   location=(u=="admin")?"admin.html":"dashboard.html";
@@ -154,3 +151,7 @@ window.addEventListener("load",()=>{
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadMy(); loadAdmin(); loadChart(); checkNotify();
 });
+
+/* ================= BUTTON BIND ================= */
+document.getElementById("loginBtn")?.addEventListener("click", login);
+document.getElementById("verifyBtn")?.addEventListener("click", verifyOTP);
