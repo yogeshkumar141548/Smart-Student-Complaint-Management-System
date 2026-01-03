@@ -1,6 +1,36 @@
-let users = JSON.parse(localStorage.getItem("users")) || [{username:"admin",password:"admin"}];
-let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
-let otpCode="", myChart;
+document.addEventListener("DOMContentLoaded", function(){
+
+ window.login = function(){
+   let u = document.getElementById("user").value;
+   let p = document.getElementById("pass").value;
+
+   let found = users.find(x=>x.username===u && x.password===p);
+   if(!found){ alert("Invalid Login"); return; }
+
+   otpCode = Math.floor(100000+Math.random()*900000);
+   alert("Your OTP: " + otpCode);
+ };
+
+ window.verifyOTP = function(){
+   let o = document.getElementById("otp").value;
+   if(o==otpCode){
+     localStorage.setItem("loginUser", document.getElementById("user").value);
+     location = (document.getElementById("user").value=="admin")?"admin.html":"dashboard.html";
+   } else alert("Wrong OTP");
+ };
+
+ window.register = function(){
+   let ru = document.getElementById("ruser").value;
+   let rp = document.getElementById("rpass").value;
+   if(!ru||!rp){alert("Fill all"); return;}
+   users.push({username:ru,password:rp});
+   localStorage.setItem("users",JSON.stringify(users));
+   document.getElementById("ruser").value="";
+   document.getElementById("rpass").value="";
+   alert("Registered Successfully");
+ };
+});
+
 
 /* AI Category */
 function getCategory(desc){
