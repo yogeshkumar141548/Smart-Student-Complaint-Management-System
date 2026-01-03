@@ -205,3 +205,4 @@ window.addEventListener("load",()=>{
 document.addEventListener("DOMContentLoaded",()=>{
  if(document.getElementById("adminList")) loadAdmin();
 });
+
