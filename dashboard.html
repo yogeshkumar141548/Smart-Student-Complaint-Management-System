@@ -10,7 +10,6 @@
 
 <div class="card wide">
 
-<button onclick="toggleDark()">🌙 Dark Mode</button>
 <h2>Student Complaint Portal</h2>
 
 <select id="dept">
@@ -30,18 +29,19 @@
 
 <input id="title" placeholder="Complaint Title">
 <textarea id="desc" placeholder="Complaint Description"></textarea>
-<input type="file" id="file">
 
 <button onclick="addComplaint()">Submit Complaint</button>
 
-<h3>Your Complaints</h3>
+<h3>Your Open Complaints</h3>
 <div id="myComplaints"></div>
 
 <h3>Closed Complaints</h3>
 <div id="archive"></div>
 
 <button onclick="logout()">Logout</button>
+
 </div>
+
 <script src="app.js"></script>
 </body>
 </html>
