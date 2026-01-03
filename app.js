@@ -145,13 +145,25 @@ function checkNotify(){
 /* ================= DARK MODE ================= */
 function toggleDark(){document.body.classList.toggle("dark");}
 
+/* ================= EXPORT ================= */
+function exportExcel(){
+ let csv="ID,User,Dept,Priority,Title,Status,Time\n";
+ complaints.forEach(c=>{
+  csv+=`${c.id},${c.user},${c.dept},${c.priority},${c.title},${c.status},${c.time}\n`;
+ });
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([csv]));
+ a.download="complaints.csv";
+ a.click();
+}
+
+function exportPDF(){
+ alert("PDF export coming soon 🙂");
+}
+
 /* ================= AUTO DAY COUNTER ================= */
 window.addEventListener("load",()=>{
  complaints.forEach(c=>{ if(c.status!="Resolved") c.days++; });
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadMy(); loadAdmin(); loadChart(); checkNotify();
 });
-
-/* ================= BUTTON BIND ================= */
-document.getElementById("loginBtn")?.addEventListener("click", login);
-document.getElementById("verifyBtn")?.addEventListener("click", verifyOTP);
