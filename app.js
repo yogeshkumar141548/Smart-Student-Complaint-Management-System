@@ -109,8 +109,11 @@ function loadAdmin(){
 
 function saveStatus(i){
  complaints[i].status=document.getElementById("status"+i).value;
+ complaints[i].notified=false;
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadAdmin();
+}
+
 }
 
 function deleteComplaint(i){
@@ -177,10 +180,34 @@ function exportPDF(){
 /* Dark Mode */
 function toggleDark(){document.body.classList.toggle("dark");}
 
-window.onload=()=>{loadMy();loadAdmin();loadChart();}
+function loadMy(){
+ if(!myComplaints) return;
+ let u=localStorage.getItem("loginUser");
+ myComplaints.innerHTML="";
+ complaints.filter(c=>c.user==u).forEach(c=>{
+  if(c.notified===false) c.notified=true;
+  myComplaints.innerHTML+=`
+  <div class="box modern">
+   <b>${c.title}</b> (${c.dept})<br>
+   ${c.desc}<br>
+   Priority:${c.priority}<br>
+   Status:${c.status}
+  </div>`;
+ });
+ localStorage.setItem("complaints",JSON.stringify(complaints));
+ checkNotify();
+}
+
+function checkNotify(){
+ let u=localStorage.getItem("loginUser");
+ let n=complaints.filter(c=>c.user==u && c.notified!=true).length;
+ if(notifyCount) notifyCount.innerText=n;
+}
+
 window.onload = () => {
- document.getElementById("loader").style.display="none";
+ document.getElementById("loader")?.style.display="none";
  loadMy();
  loadAdmin();
  loadChart();
+ checkNotify();
 };
