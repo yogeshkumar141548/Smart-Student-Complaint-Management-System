@@ -205,3 +205,6 @@ window.addEventListener("load",()=>{
  localStorage.setItem("complaints",JSON.stringify(complaints));
  loadMy(); loadAdmin(); loadChart(); checkNotify(); updateSolved();
 });
+document.addEventListener("DOMContentLoaded", function(){
+ loadAdmin();
+});
